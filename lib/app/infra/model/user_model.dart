@@ -9,9 +9,6 @@ class UserModel implements User {
   final int idUser;
 
   @override
-  final String name;
-
-  @override
   final String password;
 
   @override
@@ -20,7 +17,6 @@ class UserModel implements User {
   UserModel({
     required this.email,
     required this.idUser,
-    required this.name,
     required this.password,
     required this.user,
   });

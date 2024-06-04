@@ -8,6 +8,7 @@ class ButtonForm extends StatelessWidget {
     required this.heigth,
     required this.color,
     required this.borderColor,
+    required this.onPressed,
   });
 
   final double width;
@@ -15,6 +16,8 @@ class ButtonForm extends StatelessWidget {
   final Text text;
   final Color color;
   final Color borderColor;
+
+  final Function()? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +30,7 @@ class ButtonForm extends StatelessWidget {
               color: borderColor, width: 2, style: BorderStyle.solid)),
           backgroundColor: MaterialStatePropertyAll(color),
         ),
-        onPressed: () {},
+        onPressed: onPressed,
         child: text,
       ),
     );

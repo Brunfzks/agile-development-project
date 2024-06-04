@@ -3,31 +3,35 @@ import 'package:agile_development_project/app/domain/repository/user_repository.
 import 'package:agile_development_project/app/infra/model/user_model.dart';
 import 'package:dartz/dartz.dart';
 
-abstract class ILogin {
-  Future<Either<UserException, UserModel>> call(ParamsUser params);
+abstract class IRegistration {
+  Future<Either<UserException, UserModel>> call(ParamsRegistration params);
 }
 
-class Login implements ILogin {
+class LoginUsesCases implements IRegistration {
   UserRepository repository;
-  Login({
+  LoginUsesCases({
     required this.repository,
   });
 
   @override
-  Future<Either<UserException, UserModel>> call(ParamsUser params) async {
-    if (params.user.user.isEmpty) {
+  Future<Either<UserException, UserModel>> call(
+      ParamsRegistration params) async {
+    if (params.user.email.isEmpty) {
       return left(UserException(message: 'EMPTY LOGIN'));
     }
     if (params.user.password.isEmpty) {
       return left(UserException(message: 'EMPTY PASSWORD'));
     }
-    return await repository.login(params);
+    if (params.user.email.isEmpty) {
+      return left(UserException(message: 'EMPTY USER'));
+    }
+    return await repository.registration(params);
   }
 }
 
-class ParamsUser {
+class ParamsRegistration {
   final UserModel user;
-  ParamsUser({
+  ParamsRegistration({
     required this.user,
   });
 }
