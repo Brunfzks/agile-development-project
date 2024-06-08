@@ -1,7 +1,5 @@
-import 'package:agile_development_project/app/domain/entities/credentials.dart';
 import 'package:agile_development_project/app/domain/errors/errors.dart';
 import 'package:agile_development_project/app/external/api_go/user_api_go.dart';
-import 'package:agile_development_project/app/external/data_mock/user_datamock.dart';
 import 'package:agile_development_project/app/infra/model/credentials_model.dart';
 import 'package:agile_development_project/app/infra/model/user_model.dart';
 import 'package:agile_development_project/app/infra/repositories/user_repository_impl.dart';
@@ -77,6 +75,7 @@ class LoginCubit extends Cubit<LoginState> {
                   emit(state.copyWith(
                     status: LoginStatus.error,
                     error: exception.message,
+                    screen: LoginScreen.login,
                   ))
                 }
               else
@@ -87,23 +86,19 @@ class LoginCubit extends Cubit<LoginState> {
                   ))
                 }
             },
-        (bool user) => {
-              emit(state.copyWith(
-                status: LoginStatus.initial,
-              ))
-            });
+        (bool user) => {login(email, password)});
   }
 
-  void changeRegistrationScreen(LoginStatus tela) {
+  void changeRegistrationScreen(LoginScreen tela) {
     switch (tela) {
-      case LoginStatus.initial:
-        emit(state.copyWith(status: LoginStatus.initial));
+      case LoginScreen.login:
+        emit(state.copyWith(screen: LoginScreen.login));
         break;
-      case LoginStatus.registration:
-        emit(state.copyWith(status: LoginStatus.registration));
+      case LoginScreen.registration:
+        emit(state.copyWith(screen: LoginScreen.registration));
         break;
       default:
-        emit(state.copyWith(status: LoginStatus.initial));
+        emit(state.copyWith(screen: LoginScreen.login));
         break;
     }
   }

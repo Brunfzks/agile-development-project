@@ -15,7 +15,8 @@ import 'package:lottie/lottie.dart';
 class Login extends StatelessWidget {
   Login({super.key});
 
-  final _formKey = GlobalKey<FormState>();
+  final _formKeyLogin = GlobalKey<FormState>();
+  final _formKeyRegistration = GlobalKey<FormState>();
   final TextEditingController userController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -43,7 +44,7 @@ class Login extends StatelessWidget {
             ),
           );
         }
-        if (state.status == LoginStatus.registration) {
+        if (state.screen == LoginScreen.registration) {
           return registrationScreen(context, width, height);
         }
         return loginScreen(context, width, height);
@@ -87,7 +88,7 @@ class Login extends StatelessWidget {
                     height: 40,
                   ),
                   Form(
-                    key: _formKey,
+                    key: _formKeyRegistration,
                     child: SizedBox(
                       width: 300,
                       child: Column(
@@ -151,11 +152,14 @@ class Login extends StatelessWidget {
                           ),
                           ButtonForm(
                             onPressed: () {
-                              context.read<LoginCubit>().registration(
-                                    emailController.text,
-                                    passwordController.text,
-                                    userController.text,
-                                  );
+                              if (!_formKeyRegistration.currentState!
+                                  .validate()) {
+                                context.read<LoginCubit>().registration(
+                                      emailController.text,
+                                      passwordController.text,
+                                      userController.text,
+                                    );
+                              }
                             },
                             heigth: 50,
                             width: 200,
@@ -165,6 +169,13 @@ class Login extends StatelessWidget {
                             ),
                             color: ConstColors.secondaryColor,
                             borderColor: ConstColors.complementaryColor,
+                          ),
+                          const SizedBox(
+                            height: 50,
+                          ),
+                          const Error(),
+                          const SizedBox(
+                            height: 40,
                           ),
                         ],
                       ),
@@ -254,7 +265,7 @@ class Login extends StatelessWidget {
                     height: 40,
                   ),
                   Form(
-                    key: _formKey,
+                    key: _formKeyLogin,
                     child: SizedBox(
                       width: 300,
                       child: Column(
@@ -296,7 +307,7 @@ class Login extends StatelessWidget {
                           ),
                           ButtonForm(
                             onPressed: () {
-                              if (!_formKey.currentState!.validate()) {
+                              if (!_formKeyLogin.currentState!.validate()) {
                                 context.read<LoginCubit>().login(
                                       emailController.text,
                                       passwordController.text,
@@ -315,44 +326,7 @@ class Login extends StatelessWidget {
                           const SizedBox(
                             height: 50,
                           ),
-                          BlocBuilder<LoginCubit, LoginState>(
-                              builder: (context, state) {
-                            if (state.status == LoginStatus.error) {
-                              switch (state.error) {
-                                case 'USUARIO INVALIDO':
-                                  return Text(
-                                    'Email ou senha incorreto!',
-                                    style: GoogleFonts.roboto(
-                                      color: Colors.red.shade300,
-                                      wordSpacing: 0.5,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  );
-                                case 'EMPTY LOGIN':
-                                  return Text(
-                                    'Por favor, informe o usuário e senha!',
-                                    style: GoogleFonts.roboto(
-                                      color: Colors.red.shade300,
-                                      wordSpacing: 0.5,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  );
-                                default:
-                                  return Text(
-                                    'Infelizmente não foi possivel identificar a causa do erro',
-                                    style: GoogleFonts.roboto(
-                                      color: Colors.red.shade300,
-                                      wordSpacing: 0.5,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  );
-                              }
-                            }
-                            return Container();
-                          }),
+                          const Error(),
                           const SizedBox(
                             height: 40,
                           ),
@@ -393,7 +367,7 @@ class Login extends StatelessWidget {
           onPressed: () {
             context
                 .read<LoginCubit>()
-                .changeRegistrationScreen(LoginStatus.registration);
+                .changeRegistrationScreen(LoginScreen.registration);
           },
           heigth: 50,
           width: 180,
@@ -432,7 +406,7 @@ class Login extends StatelessWidget {
           onPressed: () {
             context
                 .read<LoginCubit>()
-                .changeRegistrationScreen(LoginStatus.initial);
+                .changeRegistrationScreen(LoginScreen.login);
           },
           heigth: 50,
           width: 180,
@@ -445,5 +419,62 @@ class Login extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+class Error extends StatelessWidget {
+  const Error({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<LoginCubit, LoginState>(builder: (context, state) {
+      if (state.status == LoginStatus.error) {
+        switch (state.error) {
+          case 'USUARIO INVALIDO':
+            return Text(
+              'Email ou senha incorreto!',
+              style: GoogleFonts.roboto(
+                color: Colors.red.shade300,
+                wordSpacing: 0.5,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            );
+          case 'EMPTY LOGIN' || 'EMPTY PASSWORD' || 'EMPTY USER':
+            return Text(
+              'Por favor, informe todos os campos!',
+              style: GoogleFonts.roboto(
+                color: Colors.red.shade300,
+                wordSpacing: 0.5,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            );
+          case 'USUARIO JA CADASTRADO':
+            return Text(
+              'Este email já está cadastrado, faça login!',
+              style: GoogleFonts.roboto(
+                color: Colors.red.shade300,
+                wordSpacing: 0.5,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            );
+          default:
+            return Text(
+              'Infelizmente não foi possivel identificar a causa do erro',
+              style: GoogleFonts.roboto(
+                color: Colors.red.shade300,
+                wordSpacing: 0.5,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            );
+        }
+      }
+      return Container();
+    });
   }
 }

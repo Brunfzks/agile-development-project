@@ -21,7 +21,7 @@ class RegistrationUsesCases implements IRegistration {
     if (params.user.password.isEmpty) {
       return left(UserException(message: 'EMPTY PASSWORD'));
     }
-    if (params.user.email.isEmpty) {
+    if (params.user.user.isEmpty) {
       return left(UserException(message: 'EMPTY USER'));
     }
     return await repository.registration(params);
