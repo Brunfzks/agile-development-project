@@ -150,7 +150,13 @@ class Login extends StatelessWidget {
                             height: 50,
                           ),
                           ButtonForm(
-                            onPressed: () {},
+                            onPressed: () {
+                              context.read<LoginCubit>().registration(
+                                    emailController.text,
+                                    passwordController.text,
+                                    userController.text,
+                                  );
+                            },
                             heigth: 50,
                             width: 200,
                             text: Text(

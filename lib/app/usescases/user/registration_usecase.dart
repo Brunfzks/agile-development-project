@@ -4,18 +4,17 @@ import 'package:agile_development_project/app/infra/model/user_model.dart';
 import 'package:dartz/dartz.dart';
 
 abstract class IRegistration {
-  Future<Either<UserException, UserModel>> call(ParamsRegistration params);
+  Future<Either<UserException, bool>> call(ParamsRegistration params);
 }
 
-class LoginUsesCases implements IRegistration {
+class RegistrationUsesCases implements IRegistration {
   UserRepository repository;
-  LoginUsesCases({
+  RegistrationUsesCases({
     required this.repository,
   });
 
   @override
-  Future<Either<UserException, UserModel>> call(
-      ParamsRegistration params) async {
+  Future<Either<UserException, bool>> call(ParamsRegistration params) async {
     if (params.user.email.isEmpty) {
       return left(UserException(message: 'EMPTY LOGIN'));
     }

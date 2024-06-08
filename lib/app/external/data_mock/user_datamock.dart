@@ -11,22 +11,18 @@ class UserDataMock implements UserDataSource {
   @override
   Future<UserModel> login(ParamsLogin params) async {
     await Future.delayed(const Duration(seconds: 1));
-    if (params.user.email == userDataMock.email &&
-        params.user.password == userDataMock.password) {
-      return params.user;
+    if (params.credentials.email == userDataMock.email &&
+        params.credentials.password == userDataMock.password) {
+      return userDataMock;
     }
     throw UserException(message: 'USUARIO INVALIDO');
   }
 
   @override
-  Future<UserModel> registration(ParamsRegistration params) async {
+  Future<bool> registration(ParamsRegistration params) async {
     await Future.delayed(const Duration(seconds: 1));
     if (params.user.email != 'erro') {
-      return UserModel(
-          email: params.user.email,
-          idUser: 2,
-          password: params.user.password,
-          user: params.user.user);
+      return true;
     }
     throw UserException(message: 'USUARIO EXISTENTE');
   }

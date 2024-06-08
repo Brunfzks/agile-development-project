@@ -1,5 +1,6 @@
 import 'package:agile_development_project/app/domain/errors/errors.dart';
 import 'package:agile_development_project/app/domain/repository/user_repository.dart';
+import 'package:agile_development_project/app/infra/model/credentials_model.dart';
 import 'package:agile_development_project/app/infra/model/user_model.dart';
 import 'package:dartz/dartz.dart';
 
@@ -15,10 +16,10 @@ class LoginUsesCases implements ILogin {
 
   @override
   Future<Either<UserException, UserModel>> call(ParamsLogin params) async {
-    if (params.user.email.isEmpty) {
+    if (params.credentials.email.isEmpty) {
       return left(UserException(message: 'EMPTY LOGIN'));
     }
-    if (params.user.password.isEmpty) {
+    if (params.credentials.password.isEmpty) {
       return left(UserException(message: 'EMPTY PASSWORD'));
     }
     return await repository.login(params);
@@ -26,8 +27,8 @@ class LoginUsesCases implements ILogin {
 }
 
 class ParamsLogin {
-  final UserModel user;
+  final CredentialsModel credentials;
   ParamsLogin({
-    required this.user,
+    required this.credentials,
   });
 }

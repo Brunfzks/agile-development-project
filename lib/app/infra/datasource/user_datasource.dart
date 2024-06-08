@@ -4,5 +4,5 @@ import 'package:agile_development_project/app/usescases/user/registration_usecas
 
 abstract class UserDataSource {
   Future<UserModel> login(ParamsLogin params);
-  Future<UserModel> registration(ParamsRegistration params);
+  Future<bool> registration(ParamsRegistration params);
 }

@@ -25,7 +25,7 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<Either<UserException, UserModel>> registration(
+  Future<Either<UserException, bool>> registration(
       ParamsRegistration params) async {
     try {
       final specie = await datasource.registration(params);

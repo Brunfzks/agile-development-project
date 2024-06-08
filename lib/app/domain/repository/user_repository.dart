@@ -6,6 +6,5 @@ import 'package:dartz/dartz.dart';
 
 abstract class UserRepository {
   Future<Either<UserException, UserModel>> login(ParamsLogin params);
-  Future<Either<UserException, UserModel>> registration(
-      ParamsRegistration params);
+  Future<Either<UserException, bool>> registration(ParamsRegistration params);
 }
