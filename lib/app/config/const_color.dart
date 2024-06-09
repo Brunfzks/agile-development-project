@@ -6,4 +6,7 @@ class ConstColors {
   static const complementaryColor = Colors.white;
   static const backGroundColor = Colors.grey;
   static const bgColor = Color(0xFF212332);
+  static const sucessColor = Colors.green;
+  static const erroColor = Colors.red;
+  static const warningColor = Colors.yellow;
 }

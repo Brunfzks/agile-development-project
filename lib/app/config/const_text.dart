@@ -51,4 +51,10 @@ class ConstText {
     fontSize: 12,
     fontWeight: FontWeight.w400,
   );
+  static TextStyle formFieldTextComplementary = GoogleFonts.roboto(
+    color: ConstColors.complementaryColor,
+    wordSpacing: 0.5,
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+  );
 }

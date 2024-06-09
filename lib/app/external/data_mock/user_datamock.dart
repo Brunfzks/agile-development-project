@@ -5,8 +5,12 @@ import 'package:agile_development_project/app/usescases/user/login_usecase.dart'
 import 'package:agile_development_project/app/usescases/user/registration_usecase.dart';
 
 class UserDataMock implements UserDataSource {
-  final UserModel userDataMock =
-      UserModel(user: 'teste', password: 'teste', idUser: 1, email: 'teste');
+  final UserModel userDataMock = UserModel(
+    user: 'teste',
+    password: 'teste',
+    idUser: 1,
+    email: 'teste',
+  );
 
   @override
   Future<UserModel> login(ParamsLogin params) async {

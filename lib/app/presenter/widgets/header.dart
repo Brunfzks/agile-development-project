@@ -1,13 +1,19 @@
 import 'package:agile_development_project/app/config/const_color.dart';
 import 'package:agile_development_project/app/config/const_parameters.dart';
 import 'package:agile_development_project/app/config/responsive.dart';
+import 'package:agile_development_project/app/infra/model/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class Header extends StatelessWidget {
   const Header({
     super.key,
+    required this.titleScreen,
+    required this.user,
   });
+
+  final String titleScreen;
+  final UserModel user;
 
   @override
   Widget build(BuildContext context) {
@@ -15,18 +21,20 @@ class Header extends StatelessWidget {
       children: [
         if (!Responsive.isDesktop(context))
           IconButton(
-            icon: Icon(Icons.menu),
+            icon: const Icon(Icons.menu),
             onPressed: () {},
           ),
         if (!Responsive.isMobile(context))
           Text(
-            "Dashboard",
+            titleScreen,
             style: Theme.of(context).textTheme.titleLarge,
           ),
         if (!Responsive.isMobile(context))
           Spacer(flex: Responsive.isDesktop(context) ? 2 : 1),
         const Expanded(child: SearchField()),
-        const ProfileCard()
+        ProfileCard(
+          user: user,
+        )
       ],
     );
   }
@@ -34,8 +42,10 @@ class Header extends StatelessWidget {
 
 class ProfileCard extends StatelessWidget {
   const ProfileCard({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+    required this.user,
+  });
+  final UserModel user;
 
   @override
   Widget build(BuildContext context) {
@@ -57,10 +67,10 @@ class ProfileCard extends StatelessWidget {
             height: 38,
           ),
           if (!Responsive.isMobile(context))
-            const Padding(
-              padding: EdgeInsets.symmetric(
+            Padding(
+              padding: const EdgeInsets.symmetric(
                   horizontal: ConstParameters.constPadding / 2),
-              child: Text("Angelina Jolie"),
+              child: Text(user.user),
             ),
           const Icon(Icons.keyboard_arrow_down),
         ],

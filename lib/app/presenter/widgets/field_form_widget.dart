@@ -14,6 +14,9 @@ class FormFieldWidget extends StatelessWidget {
     this.enable = true,
     this.isPassword = false,
     this.validator,
+    this.maxLines = 1,
+    this.minLines = 1,
+    this.textStyle,
   });
 
   final String hintText;
@@ -23,12 +26,17 @@ class FormFieldWidget extends StatelessWidget {
   final bool enable;
   final bool isPassword;
   final String? Function(String?)? validator;
+  final int maxLines;
+  final int minLines;
+  final TextStyle? textStyle;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       child: TextFormField(
-        style: ConstText.formFieldText,
+        maxLines: maxLines,
+        minLines: minLines,
+        style: textStyle ?? ConstText.formFieldText,
         validator: validator,
         obscureText: isPassword,
         enabled: enable,
@@ -38,7 +46,7 @@ class FormFieldWidget extends StatelessWidget {
           fillColor: ConstColors.backGroundColor.withAlpha(70),
           filled: true,
           hintText: hintText,
-          hintStyle: ConstText.formFieldText,
+          hintStyle: textStyle ?? ConstText.formFieldText,
           prefixIcon: icon,
           border: OutlineInputBorder(
             borderSide: const BorderSide(width: 1, color: Color(0xFFDFE4EC)),

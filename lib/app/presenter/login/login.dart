@@ -4,6 +4,7 @@ import 'package:agile_development_project/app/config/const_text.dart';
 import 'package:agile_development_project/app/config/responsive.dart';
 import 'package:agile_development_project/app/presenter/login/cubit/login_cubit.dart';
 import 'package:agile_development_project/app/presenter/login/cubit/login_state.dart';
+import 'package:agile_development_project/app/presenter/main/cubit/main_cubit.dart';
 import 'package:agile_development_project/app/presenter/main/main_screen.dart';
 import 'package:agile_development_project/app/presenter/widgets/button_widget.dart';
 import 'package:agile_development_project/app/presenter/widgets/field_form_widget.dart';
@@ -30,6 +31,7 @@ class Login extends StatelessWidget {
     return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) {
         if (state.status == LoginStatus.completed) {
+          context.read<MainCubit>().getUser(state.user);
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => MainScreen()),

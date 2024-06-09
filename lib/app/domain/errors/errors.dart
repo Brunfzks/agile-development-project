@@ -8,12 +8,12 @@ class UserException implements Exception {
   String toString() => 'UserException(message: $message)';
 }
 
-class GetListExeption implements Exception {
+class ProjectsExeption implements Exception {
   final String message;
-  GetListExeption({
+  ProjectsExeption({
     required this.message,
   });
 
   @override
-  String toString() => 'GetListExeption(message: $message)';
+  String toString() => 'ProjectsExeption(message: $message)';
 }

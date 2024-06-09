@@ -17,8 +17,9 @@ class UserApiGo implements UserDataSource {
   @override
   Future<UserModel> login(ParamsLogin params) async {
     try {
-      var result = await Dio().post('${ConstParameters.getUrlBase()}login',
+      var result = await dio.post('${ConstParameters.getUrlBase()}login',
           data: params.credentials.toJson());
+
       var json = result.data;
       return UserModel.fromJson(json);
     } on DioException catch (e) {
@@ -37,7 +38,7 @@ class UserApiGo implements UserDataSource {
   @override
   Future<bool> registration(ParamsRegistration params) async {
     try {
-      await Dio().post('${ConstParameters.getUrlBase()}user',
+      await dio.post('${ConstParameters.getUrlBase()}user',
           data: params.user.toJson());
       return true;
     } on DioException catch (e) {
