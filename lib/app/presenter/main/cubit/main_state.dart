@@ -3,7 +3,7 @@ part of 'main_cubit.dart';
 enum MainStatus { initial, completed, error, loading }
 
 class MainState extends Equatable {
-  const MainState({
+  MainState({
     required this.status,
     required this.user,
     required this.projects,

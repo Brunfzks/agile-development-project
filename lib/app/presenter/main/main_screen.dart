@@ -41,12 +41,11 @@ class MainScreen extends StatelessWidget {
             return SizedBox(
               width: state.messages.isNotEmpty ? 450 : 0,
               height: state.messages.length * 70,
-              child: AnimatedList(
+              child: ListView.builder(
                   key: state.listKey,
-                  initialItemCount: state.messages.length,
-                  itemBuilder: (context, index, animation) {
+                  itemCount: state.messages.length,
+                  itemBuilder: (context, index) {
                     return AlertMessageWidget(
-                      animation: animation,
                       status: state.messages[index].status,
                       message: state.messages[index].message,
                     );

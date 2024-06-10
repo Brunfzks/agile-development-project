@@ -7,7 +7,6 @@ import 'package:agile_development_project/app/infra/model/project_model.dart';
 import 'package:agile_development_project/app/infra/model/project_user_model.dart';
 import 'package:agile_development_project/app/infra/model/type_user_model.dart';
 import 'package:agile_development_project/app/infra/model/user_model.dart';
-import 'package:agile_development_project/app/presenter/main/cubit/main_cubit.dart';
 import 'package:agile_development_project/app/presenter/projects/cubit/project_cubit.dart';
 import 'package:agile_development_project/app/presenter/projects/widgets/project_card_grid_view.dart';
 import 'package:agile_development_project/app/presenter/widgets/alert_message/cubit/alert_message_cubit.dart';
@@ -57,10 +56,7 @@ class _ProjectsState extends State<Projects> {
                   ),
                 ),
                 onPressed: () {
-                  context
-                      .read<AlertMessageCubit>()
-                      .showMessage('TESTe', StatusMessage.success);
-                  //_createProjectDialog(context, widget.user);
+                  _createProjectDialog(context: context, user: widget.user);
                 },
                 icon: const Icon(Icons.add),
                 label: const Text("Novo Projeto"),
@@ -88,9 +84,14 @@ class _ProjectsState extends State<Projects> {
   }
 }
 
-Future<void> _createProjectDialog(BuildContext context, UserModel user) {
+Future<void> _createProjectDialog({
+  required BuildContext context,
+  required UserModel user,
+  String? text,
+}) {
   final formKey = GlobalKey<FormState>();
-  TextEditingController projectDescriptionController = TextEditingController();
+  TextEditingController projectDescriptionController =
+      TextEditingController(text: text);
   return showDialog<void>(
     context: context,
     builder: (BuildContext context) {
@@ -150,7 +151,7 @@ Future<void> _createProjectDialog(BuildContext context, UserModel user) {
                                   .read<AlertMessageCubit>()
                                   .showMessage(
                                     value
-                                        ? 'Projeto Criado Com Succesoo'
+                                        ? 'Projeto ${projectDescriptionController.text} Criado Com Succesoo'
                                         : 'Erro ao criar Projeto',
                                     value
                                         ? StatusMessage.success

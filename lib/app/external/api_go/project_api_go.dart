@@ -7,6 +7,7 @@ import 'package:agile_development_project/app/infra/model/project_model.dart';
 import 'package:agile_development_project/app/usescases/project/create_project_usecase.dart';
 import 'package:agile_development_project/app/usescases/project/delete_project_usescase.dart';
 import 'package:agile_development_project/app/usescases/project/get_projects_usecase.dart';
+import 'package:agile_development_project/app/usescases/project/update_project_usecase.dart';
 import 'package:dio/dio.dart';
 
 class ProjectApiGo implements ProjectDatasource {
@@ -67,8 +68,29 @@ class ProjectApiGo implements ProjectDatasource {
   @override
   Future<bool> deleteProjects(ParamsDeleteProjects params) async {
     try {
-      var result = await dio.delete(
+      await dio.delete(
         '${ConstParameters.getUrlBase(isProtected: true)}projects/${params.idProject}',
+      );
+      return true;
+    } on DioException catch (e) {
+      if (e.response!.statusCode == 404) {
+        throw ProjectsExeption(message: 'Não Encontrado');
+      } else if (e.response!.statusCode == 401) {
+        throw ProjectsExeption(message: 'USUARIO INVALIDO');
+      } else {
+        throw Exception();
+      }
+    } catch (e) {
+      throw ProjectsExeption(message: e.toString());
+    }
+  }
+
+  @override
+  Future<bool> updateProjects(ParamsUpdateProjects params) async {
+    try {
+      await dio.put(
+        '${ConstParameters.getUrlBase(isProtected: true)}projects/',
+        data: params.project.toJson(),
       );
       return true;
     } on DioException catch (e) {

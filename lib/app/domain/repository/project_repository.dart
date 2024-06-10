@@ -3,6 +3,7 @@ import 'package:agile_development_project/app/infra/model/project_model.dart';
 import 'package:agile_development_project/app/usescases/project/create_project_usecase.dart';
 import 'package:agile_development_project/app/usescases/project/delete_project_usescase.dart';
 import 'package:agile_development_project/app/usescases/project/get_projects_usecase.dart';
+import 'package:agile_development_project/app/usescases/project/update_project_usecase.dart';
 import 'package:dartz/dartz.dart';
 
 abstract class ProjectRepository {
@@ -12,4 +13,6 @@ abstract class ProjectRepository {
       ParamsCreateProjects params);
   Future<Either<ProjectsExeption, bool>> deleteProjects(
       ParamsDeleteProjects params);
+  Future<Either<ProjectsExeption, bool>> updateProjects(
+      ParamsUpdateProjects params);
 }
