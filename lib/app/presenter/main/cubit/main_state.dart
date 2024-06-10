@@ -9,8 +9,7 @@ class MainState extends Equatable {
     required this.projects,
     required this.error,
     required this.notificationShow,
-    required this.notificationStatus,
-    required this.notificarionMessage,
+    required this.alertMessage,
   });
 
   final MainStatus status;
@@ -18,24 +17,24 @@ class MainState extends Equatable {
   final List<ProjectModel> projects;
   final String error;
   final bool notificationShow;
-  final StatusMessage notificationStatus;
-  final String notificarionMessage;
+  final AlertMessage alertMessage;
 
   factory MainState.initial() {
     return MainState(
-      error: '',
-      status: MainStatus.initial,
-      projects: const [],
-      user: UserModel(
-        email: '',
-        idUser: 0,
-        password: '',
-        user: '',
-      ),
-      notificationShow: false,
-      notificationStatus: StatusMessage.success,
-      notificarionMessage: '',
-    );
+        error: '',
+        status: MainStatus.initial,
+        projects: const [],
+        user: UserModel(
+          email: '',
+          idUser: 0,
+          password: '',
+          user: '',
+        ),
+        notificationShow: false,
+        alertMessage: AlertMessage(
+          message: '',
+          status: StatusMessage.success,
+        ));
   }
 
   MainState copyWith({
@@ -44,8 +43,7 @@ class MainState extends Equatable {
     List<ProjectModel>? projects,
     String? error,
     bool? notificationShow,
-    StatusMessage? notificationStatus,
-    String? notificarionMessage,
+    AlertMessage? alertMessage,
   }) {
     return MainState(
       status: status ?? this.status,
@@ -53,8 +51,7 @@ class MainState extends Equatable {
       projects: projects ?? this.projects,
       error: error ?? this.error,
       notificationShow: notificationShow ?? this.notificationShow,
-      notificationStatus: notificationStatus ?? this.notificationStatus,
-      notificarionMessage: notificarionMessage ?? this.notificarionMessage,
+      alertMessage: alertMessage ?? this.alertMessage,
     );
   }
 
@@ -69,8 +66,7 @@ class MainState extends Equatable {
       projects,
       error,
       notificationShow,
-      notificationStatus,
-      notificarionMessage,
+      alertMessage,
     ];
   }
 }

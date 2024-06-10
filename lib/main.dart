@@ -7,6 +7,7 @@ import 'package:agile_development_project/app/presenter/login/cubit/login_cubit.
 import 'package:agile_development_project/app/presenter/login/login.dart';
 import 'package:agile_development_project/app/presenter/main/cubit/main_cubit.dart';
 import 'package:agile_development_project/app/presenter/projects/cubit/project_cubit.dart';
+import 'package:agile_development_project/app/presenter/widgets/alert_message/cubit/alert_message_cubit.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +44,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<ProjectCubit>(
           create: (context) => ProjectCubit(),
+        ),
+        BlocProvider<AlertMessageCubit>(
+          create: (context) => AlertMessageCubit(),
         ),
       ],
       child: MaterialApp(

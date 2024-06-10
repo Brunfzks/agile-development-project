@@ -8,5 +8,3 @@ class ConstParameters {
 
   static const double constPadding = 16;
 }
-
-enum StatusMessage { erro, success, warning }

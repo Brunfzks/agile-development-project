@@ -2,6 +2,7 @@ import 'package:agile_development_project/app/config/const_color.dart';
 import 'package:agile_development_project/app/config/const_parameters.dart';
 import 'package:agile_development_project/app/config/const_text.dart';
 import 'package:agile_development_project/app/config/responsive.dart';
+import 'package:agile_development_project/app/domain/entities/alert_message.dart';
 import 'package:agile_development_project/app/infra/model/project_model.dart';
 import 'package:agile_development_project/app/infra/model/project_user_model.dart';
 import 'package:agile_development_project/app/infra/model/type_user_model.dart';
@@ -9,6 +10,7 @@ import 'package:agile_development_project/app/infra/model/user_model.dart';
 import 'package:agile_development_project/app/presenter/main/cubit/main_cubit.dart';
 import 'package:agile_development_project/app/presenter/projects/cubit/project_cubit.dart';
 import 'package:agile_development_project/app/presenter/projects/widgets/project_card_grid_view.dart';
+import 'package:agile_development_project/app/presenter/widgets/alert_message/cubit/alert_message_cubit.dart';
 import 'package:agile_development_project/app/presenter/widgets/button_widget.dart';
 import 'package:agile_development_project/app/presenter/widgets/field_form_widget.dart';
 import 'package:agile_development_project/app/presenter/widgets/header.dart';
@@ -55,7 +57,10 @@ class _ProjectsState extends State<Projects> {
                   ),
                 ),
                 onPressed: () {
-                  _createProjectDialog(context, widget.user);
+                  context
+                      .read<AlertMessageCubit>()
+                      .showMessage('TESTe', StatusMessage.success);
+                  //_createProjectDialog(context, widget.user);
                 },
                 icon: const Icon(Icons.add),
                 label: const Text("Novo Projeto"),
@@ -141,15 +146,16 @@ Future<void> _createProjectDialog(BuildContext context, UserModel user) {
                                   )
                                 ]))
                             .then(
-                              (value) async =>
-                                  await context.read<MainCubit>().showMessage(
-                                        value
-                                            ? 'Projeto Criado Com Succesoo'
-                                            : 'Erro ao criar Projeto',
-                                        value
-                                            ? StatusMessage.success
-                                            : StatusMessage.erro,
-                                      ),
+                              (value) async => await context
+                                  .read<AlertMessageCubit>()
+                                  .showMessage(
+                                    value
+                                        ? 'Projeto Criado Com Succesoo'
+                                        : 'Erro ao criar Projeto',
+                                    value
+                                        ? StatusMessage.success
+                                        : StatusMessage.erro,
+                                  ),
                             );
                         Navigator.pop(context);
                       }
