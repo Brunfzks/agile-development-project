@@ -1,0 +1,73 @@
+import 'package:agile_development_project/app/config/const_color.dart';
+import 'package:agile_development_project/app/config/const_text.dart';
+import 'package:agile_development_project/app/presenter/widgets/button_widget.dart';
+import 'package:agile_development_project/app/presenter/widgets/field_form_widget.dart';
+import 'package:flutter/material.dart';
+
+class CreateProjectDialog extends StatelessWidget {
+  CreateProjectDialog(
+      {super.key,
+      required this.onTap,
+      required this.include,
+      required this.projectDescriptionController});
+
+  final TextEditingController projectDescriptionController;
+  final formKey = GlobalKey<FormState>();
+  final Function() onTap;
+  final bool include;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(include ? 'Novo Projeto' : 'Alterando'),
+      content: SizedBox(
+        height: 250,
+        child: Form(
+          key: formKey,
+          child: SizedBox(
+            width: 300,
+            child: Column(
+              children: [
+                FormFieldWidget(
+                  textStyle: ConstText.formFieldTextComplementary,
+                  hintText: 'Descrição',
+                  icon: const Icon(
+                    Icons.description,
+                    color: ConstColors.complementaryColor,
+                  ),
+                  controller: projectDescriptionController,
+                  validator: (text) {
+                    if (text == null || text.isEmpty) {
+                      return 'Por Favor, entre com a descrição!';
+                    }
+                    return null;
+                  },
+                  maxLines: 5,
+                  minLines: 5,
+                ),
+                const SizedBox(
+                  height: 50,
+                ),
+                ButtonForm(
+                  onPressed: () {
+                    if (formKey.currentState!.validate()) {
+                      onTap();
+                    }
+                  },
+                  heigth: 50,
+                  width: 200,
+                  text: Text(
+                    include ? 'Criar' : 'Alterar',
+                    style: ConstText.h1,
+                  ),
+                  color: ConstColors.secondaryColor,
+                  borderColor: ConstColors.complementaryColor,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

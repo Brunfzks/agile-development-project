@@ -5,6 +5,7 @@ import 'package:agile_development_project/app/infra/repositories/project_reposit
 import 'package:agile_development_project/app/usescases/project/create_project_usecase.dart';
 import 'package:agile_development_project/app/usescases/project/delete_project_usescase.dart';
 import 'package:agile_development_project/app/usescases/project/get_projects_usecase.dart';
+import 'package:agile_development_project/app/usescases/project/update_project_usecase.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:get_it/get_it.dart';
@@ -132,6 +133,44 @@ class ProjectCubit extends Cubit<ProjectState> {
       emit(state.copyWith(
         status: ProjectStatus.completed,
         projects: projects,
+      ));
+      retorno = true;
+    });
+    return retorno;
+  }
+
+  Future<bool> updateProjects(ProjectModel project) async {
+    emit(
+      state.copyWith(status: ProjectStatus.loading),
+    );
+    bool retorno = false;
+
+    final result = await UpdateProjectUsesCases(
+      repository: _projectRepositoryImpl,
+    ).call(
+      ParamsUpdateProjects(project: project),
+    );
+
+    result.fold((ProjectsExeption exception) {
+      if (exception.message == 'USUARIO INVALIDO') {
+        emit(state.copyWith(
+          status: ProjectStatus.error,
+          error: exception.message,
+        ));
+      } else {
+        emit(state.copyWith(
+          status: ProjectStatus.error,
+          error: exception.message,
+        ));
+      }
+    }, (bool t) {
+      state.projects[state.projects
+              .indexWhere((value) => value.idProject == project.idProject)] =
+          project;
+
+      emit(state.copyWith(
+        status: ProjectStatus.completed,
+        projects: state.projects,
       ));
       retorno = true;
     });

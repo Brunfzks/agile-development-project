@@ -89,7 +89,7 @@ class ProjectApiGo implements ProjectDatasource {
   Future<bool> updateProjects(ParamsUpdateProjects params) async {
     try {
       await dio.put(
-        '${ConstParameters.getUrlBase(isProtected: true)}projects/',
+        '${ConstParameters.getUrlBase(isProtected: true)}projects',
         data: params.project.toJson(),
       );
       return true;

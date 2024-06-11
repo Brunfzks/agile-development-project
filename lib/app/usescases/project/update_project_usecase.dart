@@ -3,13 +3,13 @@ import 'package:agile_development_project/app/domain/repository/project_reposito
 import 'package:agile_development_project/app/infra/model/project_model.dart';
 import 'package:dartz/dartz.dart';
 
-abstract class ICreatetProject {
+abstract class IUpdateProject {
   Future<Either<ProjectsExeption, bool>> call(ParamsUpdateProjects params);
 }
 
-class CreateProjectUsesCases implements ICreatetProject {
+class UpdateProjectUsesCases implements IUpdateProject {
   ProjectRepository repository;
-  CreateProjectUsesCases({
+  UpdateProjectUsesCases({
     required this.repository,
   });
 
