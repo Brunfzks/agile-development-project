@@ -2,7 +2,8 @@ import 'package:agile_development_project/app/config/const_color.dart';
 import 'package:agile_development_project/app/config/const_parameters.dart';
 import 'package:agile_development_project/app/domain/entities/alert_message.dart';
 import 'package:agile_development_project/app/infra/model/project_model.dart';
-import 'package:agile_development_project/app/presenter/dashboard/widgets/file_info_card.dart';
+import 'package:agile_development_project/app/presenter/dashboard/dashboard.dart';
+import 'package:agile_development_project/app/presenter/dashboard_old/widgets/file_info_card.dart';
 import 'package:agile_development_project/app/presenter/main/cubit/main_cubit.dart';
 import 'package:agile_development_project/app/presenter/projects/cubit/project_cubit.dart';
 import 'package:agile_development_project/app/presenter/projects/widgets/create_project_dialog.dart';
@@ -21,7 +22,15 @@ class CardProjects extends StatelessWidget {
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
-        onTap: () {},
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Dashboard(
+                    project: project,
+                    user: context.read<MainCubit>().state.user)),
+          );
+        },
         child: Container(
           padding: const EdgeInsets.all(ConstParameters.constPadding),
           decoration: const BoxDecoration(
@@ -150,6 +159,7 @@ _alterProjectDialog({
             context
                 .read<ProjectCubit>()
                 .updateProjects(ProjectModel(
+                    statusProjectTask: project.statusProjectTask,
                     description: projectDescriptionController.text,
                     feedback: project.feedback,
                     idProject: project.idProject,

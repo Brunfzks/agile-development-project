@@ -1,6 +1,5 @@
 import 'package:agile_development_project/app/config/const_parameters.dart';
 import 'package:agile_development_project/app/config/responsive.dart';
-import 'package:agile_development_project/app/presenter/dashboard/widgets/my_fields.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/header.dart';
@@ -26,7 +25,7 @@ class DashboardScreen extends StatelessWidget {
                   flex: 5,
                   child: Column(
                     children: [
-                      MyFiles(),
+                      //MyFiles(),
                       SizedBox(height: ConstParameters.constPadding),
                       RecentFiles(),
                       if (Responsive.isMobile(context))

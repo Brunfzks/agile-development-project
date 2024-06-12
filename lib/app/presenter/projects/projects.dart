@@ -97,6 +97,7 @@ _createProjectDialog({
             context
                 .read<ProjectCubit>()
                 .insertProjects(ProjectModel(
+                    statusProjectTask: [],
                     description: projectDescriptionController.text,
                     feedback: '',
                     idProject: 0,
