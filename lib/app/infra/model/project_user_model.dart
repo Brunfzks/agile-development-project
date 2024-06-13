@@ -40,9 +40,11 @@ class ProjectUserModel implements ProjectUser {
   factory ProjectUserModel.fromMap(Map<String, dynamic> map) {
     return ProjectUserModel(
       email: map['email'] as String,
-      idProject: map['idProject'] as int,
+      idProject: map['idProject'] ?? 0,
       idUser: map['idUser'] as int,
-      typeUser: TypeUserModel.fromMap(map['typeUser'] as Map<String, dynamic>),
+      typeUser: map['typeUser'] != null
+          ? TypeUserModel.fromMap(map['typeUser'] as Map<String, dynamic>)
+          : TypeUserModel(idTypeUser: 0, typeUser: ''),
       user: map['user'] as String,
     );
   }

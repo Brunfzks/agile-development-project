@@ -17,6 +17,7 @@ class FormFieldWidget extends StatelessWidget {
     this.maxLines = 1,
     this.minLines = 1,
     this.textStyle,
+    this.onchange,
   });
 
   final String hintText;
@@ -29,11 +30,13 @@ class FormFieldWidget extends StatelessWidget {
   final int maxLines;
   final int minLines;
   final TextStyle? textStyle;
+  final Function(String)? onchange;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       child: TextFormField(
+        onChanged: onchange,
         maxLines: maxLines,
         minLines: minLines,
         style: textStyle ?? ConstText.formFieldText,

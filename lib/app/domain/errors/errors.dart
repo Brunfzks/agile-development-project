@@ -27,3 +27,13 @@ class StatusExeption implements Exception {
   @override
   String toString() => 'StatusExeption(message: $message)';
 }
+
+class ProjectUsersExeption implements Exception {
+  final String message;
+  ProjectUsersExeption({
+    required this.message,
+  });
+
+  @override
+  String toString() => 'ProjectUsersExeption(message: $message)';
+}

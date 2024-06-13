@@ -24,8 +24,8 @@ class TypeUserModel implements TypeUser {
 
   factory TypeUserModel.fromMap(Map<String, dynamic> map) {
     return TypeUserModel(
-      idTypeUser: map['idTypeUser'] as int,
-      typeUser: map['typeUser'] as String,
+      idTypeUser: map['idTypeUser'] ?? 0,
+      typeUser: map['typeUser'] ?? '',
     );
   }
 

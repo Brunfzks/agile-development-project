@@ -7,14 +7,17 @@ class DashboardState extends Equatable {
     required this.status,
     required this.error,
     required this.project,
+    required this.projectsUsers,
   });
 
   final DashboardStatus status;
   final String error;
   final ProjectModel project;
+  final List<ProjectUserModel> projectsUsers;
 
   factory DashboardState.initial() {
     return DashboardState(
+      projectsUsers: const [],
       error: '',
       status: DashboardStatus.initial,
       project: ProjectModel(
@@ -31,11 +34,13 @@ class DashboardState extends Equatable {
     DashboardStatus? status,
     String? error,
     ProjectModel? project,
+    List<ProjectUserModel>? projectsUsers,
   }) {
     return DashboardState(
       status: status ?? this.status,
       error: error ?? this.error,
       project: project ?? this.project,
+      projectsUsers: projectsUsers ?? this.projectsUsers,
     );
   }
 
@@ -43,5 +48,5 @@ class DashboardState extends Equatable {
   bool get stringify => true;
 
   @override
-  List<Object> get props => [status, error, project];
+  List<Object> get props => [status, error, project, projectsUsers];
 }

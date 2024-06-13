@@ -2,8 +2,8 @@
 import 'package:agile_development_project/app/config/const_color.dart';
 import 'package:agile_development_project/app/config/const_parameters.dart';
 import 'package:agile_development_project/app/presenter/dashboard/cubit/dashboard_cubit.dart';
+import 'package:agile_development_project/app/presenter/dashboard/widget/add_colab_dialog.dart';
 import 'package:agile_development_project/app/presenter/dashboard/widget/create_group_dialog.dart';
-import 'package:agile_development_project/app/presenter/login/login.dart';
 import 'package:appflowy_board/appflowy_board.dart';
 import 'package:flutter/material.dart';
 
@@ -41,10 +41,11 @@ class _DashboardState extends State<Dashboard> {
     },
   );
 
+  final GlobalKey<_DashboardState> dashbordKey = GlobalKey();
+
   @override
   void initState() {
     context.read<DashboardCubit>().getProject(widget.project);
-
     controller.addGroups(context.read<DashboardCubit>().returnGroupData());
     super.initState();
   }
@@ -52,6 +53,7 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: dashbordKey,
       drawer: const SideMenu(),
       body: Row(children: [
         if (Responsive.isDesktop(context))
@@ -76,72 +78,68 @@ class _DashboardState extends State<Dashboard> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
-                        child: SizedBox(
-                          height: 40,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: context
-                                    .watch<DashboardCubit>()
-                                    .state
-                                    .project
-                                    .projectUsers
-                                    .length +
-                                1,
-                            itemBuilder: (context, index) {
-                              return index ==
-                                      context
-                                          .watch<DashboardCubit>()
-                                          .state
-                                          .project
-                                          .projectUsers
-                                          .length
-                                  ? SizedBox(
-                                      width: 40,
-                                      height: 40,
-                                      child: MouseRegion(
-                                        cursor: SystemMouseCursors.click,
-                                        child: GestureDetector(
-                                          child: Container(
-                                            width: 40,
-                                            decoration: const BoxDecoration(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(30)),
-                                              color:
-                                                  ConstColors.backGroundColor,
-                                            ),
-                                            child: const Center(
-                                              child: Icon(Icons.add),
+                      BlocBuilder<DashboardCubit, DashboardState>(
+                        builder: (context, state) {
+                          return Expanded(
+                            child: SizedBox(
+                              height: 40,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount:
+                                    state.project.projectUsers.length + 1,
+                                itemBuilder: (context, index) {
+                                  return index ==
+                                          state.project.projectUsers.length
+                                      ? SizedBox(
+                                          width: 40,
+                                          height: 40,
+                                          child: MouseRegion(
+                                            cursor: SystemMouseCursors.click,
+                                            child: GestureDetector(
+                                              onTap: () async {
+                                                context
+                                                    .read<DashboardCubit>()
+                                                    .getUsers();
+                                                _addColabDialog();
+                                              },
+                                              child: Container(
+                                                width: 40,
+                                                decoration: const BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(30)),
+                                                  color: ConstColors
+                                                      .backGroundColor,
+                                                ),
+                                                child: const Center(
+                                                  child: Icon(Icons.add),
+                                                ),
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      ),
-                                    )
-                                  : Container(
-                                      margin: EdgeInsets.only(right: 5),
-                                      width: 40,
-                                      decoration: const BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(30)),
-                                        color: ConstColors.backGroundColor,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          context
-                                              .watch<DashboardCubit>()
-                                              .state
-                                              .project
-                                              .projectUsers[index]
-                                              .user
-                                              .characters
-                                              .first
-                                              .toUpperCase(),
-                                        ),
-                                      ),
-                                    );
-                            },
-                          ),
-                        ),
+                                        )
+                                      : Container(
+                                          margin:
+                                              const EdgeInsets.only(right: 5),
+                                          width: 40,
+                                          decoration: const BoxDecoration(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(30)),
+                                            color: ConstColors.backGroundColor,
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              state.project.projectUsers[index]
+                                                  .user.characters.first
+                                                  .toUpperCase(),
+                                            ),
+                                          ),
+                                        );
+                                },
+                              ),
+                            ),
+                          );
+                        },
                       ),
                       ElevatedButton.icon(
                         style: TextButton.styleFrom(
@@ -152,7 +150,7 @@ class _DashboardState extends State<Dashboard> {
                           ),
                         ),
                         onPressed: () {
-                          _alterGroupDialog(context: context);
+                          _alterGroupDialog();
                         },
                         icon: const Icon(Icons.add),
                         label: const Text("Add"),
@@ -196,9 +194,7 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  _alterGroupDialog({
-    required BuildContext context,
-  }) {
+  _alterGroupDialog() {
     TextEditingController projectDescriptionController =
         TextEditingController();
     return showDialog<void>(
@@ -211,15 +207,31 @@ class _DashboardState extends State<Dashboard> {
                   .read<DashboardCubit>()
                   .createStatus(projectDescriptionController.text)
                   .then((value) {
-                if (!mounted) return;
                 controller.clear();
-                controller.addGroups(
-                    context.read<DashboardCubit>().returnGroupData());
+                controller.addGroups(dashbordKey.currentContext!
+                    .read<DashboardCubit>()
+                    .returnGroupData());
               });
 
               Navigator.pop(context);
             },
             include: true);
+      },
+    );
+  }
+
+  _addColabDialog() {
+    TextEditingController projectDescriptionController =
+        TextEditingController();
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AddColabDialog(
+          project: context.read<DashboardCubit>().state.project,
+          projectDescriptionController: projectDescriptionController,
+          onTap: () {},
+          include: true,
+        );
       },
     );
   }
