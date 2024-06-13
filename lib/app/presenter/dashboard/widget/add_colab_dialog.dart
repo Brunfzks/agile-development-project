@@ -5,8 +5,8 @@ import 'package:agile_development_project/app/presenter/widgets/button_widget.da
 import 'package:agile_development_project/app/presenter/widgets/field_form_widget.dart';
 import 'package:flutter/material.dart';
 
-class CreateGroupDialog extends StatelessWidget {
-  CreateGroupDialog({
+class AddColabDialog extends StatelessWidget {
+  AddColabDialog({
     super.key,
     required this.projectDescriptionController,
     required this.onTap,
@@ -21,7 +21,7 @@ class CreateGroupDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(include ? 'Novo Grupo' : 'Alterando'),
+      title: Text(include ? 'Adicionar Colaborador' : 'Alterando'),
       content: SizedBox(
         height: 250,
         child: Form(

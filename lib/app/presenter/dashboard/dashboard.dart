@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:agile_development_project/app/config/const_color.dart';
 import 'package:agile_development_project/app/config/const_parameters.dart';
 import 'package:agile_development_project/app/presenter/dashboard/cubit/dashboard_cubit.dart';
 import 'package:agile_development_project/app/presenter/dashboard/widget/create_group_dialog.dart';
@@ -71,24 +72,93 @@ class _DashboardState extends State<Dashboard> {
                     child: Header(
                         titleScreen: widget.project.description,
                         user: widget.user)),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    ElevatedButton.icon(
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: ConstParameters.constPadding * 1.5,
-                          vertical: ConstParameters.constPadding /
-                              (Responsive.isMobile(context) ? 2 : 1),
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 40,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: context
+                                    .watch<DashboardCubit>()
+                                    .state
+                                    .project
+                                    .projectUsers
+                                    .length +
+                                1,
+                            itemBuilder: (context, index) {
+                              return index ==
+                                      context
+                                          .watch<DashboardCubit>()
+                                          .state
+                                          .project
+                                          .projectUsers
+                                          .length
+                                  ? SizedBox(
+                                      width: 40,
+                                      height: 40,
+                                      child: MouseRegion(
+                                        cursor: SystemMouseCursors.click,
+                                        child: GestureDetector(
+                                          child: Container(
+                                            width: 40,
+                                            decoration: const BoxDecoration(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(30)),
+                                              color:
+                                                  ConstColors.backGroundColor,
+                                            ),
+                                            child: const Center(
+                                              child: Icon(Icons.add),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : Container(
+                                      margin: EdgeInsets.only(right: 5),
+                                      width: 40,
+                                      decoration: const BoxDecoration(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(30)),
+                                        color: ConstColors.backGroundColor,
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          context
+                                              .watch<DashboardCubit>()
+                                              .state
+                                              .project
+                                              .projectUsers[index]
+                                              .user
+                                              .characters
+                                              .first
+                                              .toUpperCase(),
+                                        ),
+                                      ),
+                                    );
+                            },
+                          ),
                         ),
                       ),
-                      onPressed: () {
-                        _alterGroupDialog(context: context);
-                      },
-                      icon: const Icon(Icons.add),
-                      label: const Text("Add"),
-                    ),
-                  ],
+                      ElevatedButton.icon(
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: ConstParameters.constPadding * 1.5,
+                            vertical: ConstParameters.constPadding /
+                                (Responsive.isMobile(context) ? 2 : 1),
+                          ),
+                        ),
+                        onPressed: () {
+                          _alterGroupDialog(context: context);
+                        },
+                        icon: const Icon(Icons.add),
+                        label: const Text("Add"),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: ConstParameters.constPadding),
                 Expanded(

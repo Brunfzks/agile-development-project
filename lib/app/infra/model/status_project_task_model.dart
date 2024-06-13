@@ -13,10 +13,14 @@ class StatusProjectTaskModel implements StatusProjectTask {
   @override
   final String status;
 
+  @override
+  final int ordem;
+
   StatusProjectTaskModel({
     required this.idProject,
     required this.idStatusProjectTask,
     required this.status,
+    required this.ordem,
   });
 
   Map<String, dynamic> toMap() {
@@ -24,6 +28,7 @@ class StatusProjectTaskModel implements StatusProjectTask {
       'idProject': idProject,
       'idStatusProjectTask': idStatusProjectTask,
       'status': status,
+      'ordem': ordem,
     };
   }
 
@@ -32,6 +37,7 @@ class StatusProjectTaskModel implements StatusProjectTask {
       idProject: map['idProject'] as int,
       idStatusProjectTask: map['idStatusProjectTask'] as int,
       status: map['status'] as String,
+      ordem: map['ordem'] as int,
     );
   }
 

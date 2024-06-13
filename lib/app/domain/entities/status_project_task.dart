@@ -3,9 +3,11 @@ class StatusProjectTask {
   final int idStatusProjectTask;
   final String status;
   final int idProject;
+  final int ordem;
   StatusProjectTask({
     required this.idStatusProjectTask,
     required this.status,
     required this.idProject,
+    required this.ordem,
   });
 }

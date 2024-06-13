@@ -41,6 +41,7 @@ class DashboardCubit extends Cubit<DashboardState> {
           status: StatusProjectTaskModel(
               idProject: state.project.idProject,
               idStatusProjectTask: 0,
+              ordem: state.project.statusProjectTask.length + 1,
               status: description)),
     );
 
