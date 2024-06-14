@@ -4,6 +4,10 @@ import 'package:agile_development_project/app/config/const_parameters.dart';
 import 'package:agile_development_project/app/presenter/dashboard/cubit/dashboard_cubit.dart';
 import 'package:agile_development_project/app/presenter/dashboard/widget/add_colab_dialog.dart';
 import 'package:agile_development_project/app/presenter/dashboard/widget/create_group_dialog.dart';
+import 'package:agile_development_project/app/presenter/main/cubit/main_cubit.dart';
+import 'package:agile_development_project/app/presenter/projects/cubit/project_cubit.dart';
+import 'package:agile_development_project/app/presenter/widgets/alert_message/alert_message.dart';
+import 'package:agile_development_project/app/presenter/widgets/alert_message/cubit/alert_message_cubit.dart';
 import 'package:appflowy_board/appflowy_board.dart';
 import 'package:flutter/material.dart';
 
@@ -52,145 +56,248 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: dashbordKey,
-      drawer: const SideMenu(),
-      body: Row(children: [
-        if (Responsive.isDesktop(context))
-          const Expanded(
-            child: SideMenu(),
-          ),
-        Expanded(
-          flex: 5,
-          child: Padding(
-            padding: const EdgeInsets.only(
-                left: ConstParameters.constPadding,
-                right: ConstParameters.constPadding,
-                bottom: ConstParameters.constPadding),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                    child: Header(
-                        titleScreen: widget.project.description,
-                        user: widget.user)),
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      BlocBuilder<DashboardCubit, DashboardState>(
-                        builder: (context, state) {
-                          return Expanded(
-                            child: SizedBox(
-                              height: 40,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount:
-                                    state.project.projectUsers.length + 1,
-                                itemBuilder: (context, index) {
-                                  return index ==
-                                          state.project.projectUsers.length
-                                      ? SizedBox(
-                                          width: 40,
-                                          height: 40,
-                                          child: MouseRegion(
-                                            cursor: SystemMouseCursors.click,
-                                            child: GestureDetector(
-                                              onTap: () async {
-                                                context
-                                                    .read<DashboardCubit>()
-                                                    .getUsers();
-                                                _addColabDialog();
-                                              },
-                                              child: Container(
-                                                width: 40,
-                                                decoration: const BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(30)),
-                                                  color: ConstColors
-                                                      .backGroundColor,
-                                                ),
-                                                child: const Center(
-                                                  child: Icon(Icons.add),
+    return Stack(
+      children: [
+        Scaffold(
+          key: dashbordKey,
+          drawer: const SideMenu(),
+          body: Row(children: [
+            if (Responsive.isDesktop(context))
+              const Expanded(
+                child: SideMenu(),
+              ),
+            Expanded(
+              flex: 5,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    left: ConstParameters.constPadding,
+                    right: ConstParameters.constPadding,
+                    bottom: ConstParameters.constPadding),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                        child: Header(
+                            titleScreen: widget.project.description,
+                            user: widget.user)),
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          BlocBuilder<DashboardCubit, DashboardState>(
+                            builder: (context, state) {
+                              return Expanded(
+                                child: SizedBox(
+                                  height: 40,
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount:
+                                        state.project.projectUsers.length + 1,
+                                    itemBuilder: (context, index) {
+                                      return index ==
+                                              state.project.projectUsers.length
+                                          ? SizedBox(
+                                              width: 40,
+                                              height: 40,
+                                              child: MouseRegion(
+                                                cursor:
+                                                    SystemMouseCursors.click,
+                                                child: GestureDetector(
+                                                  onTap: () async {
+                                                    context
+                                                        .read<DashboardCubit>()
+                                                        .getUsers();
+                                                    _addColabDialog();
+                                                  },
+                                                  child: Container(
+                                                    width: 40,
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  30)),
+                                                      color: ConstColors
+                                                          .backGroundColor,
+                                                    ),
+                                                    child: const Center(
+                                                      child: Icon(Icons.add),
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          ),
-                                        )
-                                      : Container(
-                                          margin:
-                                              const EdgeInsets.only(right: 5),
-                                          width: 40,
-                                          decoration: const BoxDecoration(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(30)),
-                                            color: ConstColors.backGroundColor,
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              state.project.projectUsers[index]
-                                                  .user.characters.first
-                                                  .toUpperCase(),
-                                            ),
-                                          ),
-                                        );
-                                },
+                                            )
+                                          : Container(
+                                              margin: const EdgeInsets.only(
+                                                  right: 5),
+                                              width: 40,
+                                              decoration: const BoxDecoration(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(30)),
+                                                color:
+                                                    ConstColors.backGroundColor,
+                                              ),
+                                              child: PopupMenuButton(
+                                                onSelected: (value) {
+                                                  switch (value) {
+                                                    case 'Excluir':
+                                                      context
+                                                          .read<ProjectCubit>()
+                                                          .deleteProjects(
+                                                              project)
+                                                          .then((value) {
+                                                        if (!context.mounted) {
+                                                          return;
+                                                        }
+                                                        context
+                                                            .read<
+                                                                AlertMessageCubit>()
+                                                            .showMessage(
+                                                                value
+                                                                    ? 'Projeto ${project.description} excluido com sucesso!'
+                                                                    : 'Erro ao excluir o projeto!',
+                                                                value
+                                                                    ? StatusMessage
+                                                                        .success
+                                                                    : StatusMessage
+                                                                        .erro);
+                                                      });
+                                                      break;
+                                                    case 'Alterar':
+                                                      _alterProjectDialog(
+                                                          context: context,
+                                                          project: project);
+                                                      break;
+                                                  }
+                                                },
+                                                itemBuilder: (context) {
+                                                  return [
+                                                    PopupMenuItem(
+                                                      enabled: false,
+                                                      child: Row(
+                                                        children: [
+                                                          const Icon(
+                                                              Icons.email),
+                                                          const SizedBox(
+                                                            width: 10,
+                                                          ),
+                                                          Text(state
+                                                              .project
+                                                              .projectUsers[
+                                                                  index]
+                                                              .email),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    PopupMenuItem(
+                                                      enabled: !(state
+                                                              .project
+                                                              .projectUsers[
+                                                                  index]
+                                                              .idUser ==
+                                                          widget.user.idUser),
+                                                      value: 'Exluir',
+                                                      child: const Row(
+                                                        children: [
+                                                          Icon(Icons.delete),
+                                                          SizedBox(
+                                                            width: 10,
+                                                          ),
+                                                          Text(
+                                                              "Remover do projeto"),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ];
+                                                },
+                                                child: Center(
+                                                  child: Text(
+                                                    state
+                                                        .project
+                                                        .projectUsers[index]
+                                                        .user
+                                                        .characters
+                                                        .first
+                                                        .toUpperCase(),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          ElevatedButton.icon(
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: ConstParameters.constPadding * 1.5,
+                                vertical: ConstParameters.constPadding /
+                                    (Responsive.isMobile(context) ? 2 : 1),
                               ),
                             ),
+                            onPressed: () {
+                              _alterGroupDialog();
+                            },
+                            icon: const Icon(Icons.add),
+                            label: const Text("Add"),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: ConstParameters.constPadding),
+                    Expanded(
+                      flex: 5,
+                      child: AppFlowyBoard(
+                        config: const AppFlowyBoardConfig(
+                            groupBackgroundColor: Colors.blue,
+                            groupBodyPadding: EdgeInsets.all(8)),
+                        groupConstraints:
+                            const BoxConstraints.tightFor(width: 240),
+                        headerBuilder: (context, group) {
+                          return AppFlowyGroupHeader(
+                            addIcon: const Icon(Icons.add),
+                            margin: const EdgeInsets.all(8),
+                            title: Text(group.headerData.groupName),
                           );
                         },
-                      ),
-                      ElevatedButton.icon(
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: ConstParameters.constPadding * 1.5,
-                            vertical: ConstParameters.constPadding /
-                                (Responsive.isMobile(context) ? 2 : 1),
-                          ),
-                        ),
-                        onPressed: () {
-                          _alterGroupDialog();
+                        controller: controller,
+                        cardBuilder: (context, group, groupItem) {
+                          final textItem = groupItem as TextItem;
+                          return AppFlowyGroupCard(
+                            decoration: const BoxDecoration(color: Colors.red),
+                            key: ObjectKey(textItem),
+                          );
                         },
-                        icon: const Icon(Icons.add),
-                        label: const Text("Add"),
+                        footerBuilder: (context, group) {
+                          return const AppFlowyGroupFooter();
+                        },
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: ConstParameters.constPadding),
-                Expanded(
-                  flex: 5,
-                  child: AppFlowyBoard(
-                    config: const AppFlowyBoardConfig(
-                        groupBackgroundColor: Colors.blue,
-                        groupBodyPadding: EdgeInsets.all(8)),
-                    groupConstraints: const BoxConstraints.tightFor(width: 240),
-                    headerBuilder: (context, group) {
-                      return AppFlowyGroupHeader(
-                        addIcon: const Icon(Icons.add),
-                        margin: const EdgeInsets.all(8),
-                        title: Text(group.headerData.groupName),
-                      );
-                    },
-                    controller: controller,
-                    cardBuilder: (context, group, groupItem) {
-                      final textItem = groupItem as TextItem;
-                      return AppFlowyGroupCard(
-                        decoration: const BoxDecoration(color: Colors.red),
-                        key: ObjectKey(textItem),
-                      );
-                    },
-                    footerBuilder: (context, group) {
-                      return const AppFlowyGroupFooter();
-                    },
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
+          ]),
         ),
-      ]),
+        BlocBuilder<AlertMessageCubit, AlertMessageState>(
+          builder: (context, state) {
+            return SizedBox(
+              width: state.messages.isNotEmpty ? 450 : 0,
+              height: state.messages.length * 70,
+              child: ListView.builder(
+                  itemCount: state.messages.length,
+                  itemBuilder: (context, index) {
+                    return AlertMessageWidget(
+                      status: state.messages[index].status,
+                      message: state.messages[index].message,
+                    );
+                  }),
+            );
+          },
+        )
+      ],
     );
   }
 

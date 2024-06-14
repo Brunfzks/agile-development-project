@@ -6,8 +6,6 @@ class AlertMessageState extends Equatable {
   });
 
   final List<AlertMessage> messages;
-  final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
-
   factory AlertMessageState.initial() {
     return AlertMessageState(messages: const []);
   }

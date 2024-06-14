@@ -1,10 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:agile_development_project/app/config/const_color.dart';
 import 'package:agile_development_project/app/config/const_text.dart';
+import 'package:agile_development_project/app/domain/entities/alert_message.dart';
 import 'package:agile_development_project/app/infra/model/project_model.dart';
 import 'package:agile_development_project/app/infra/model/project_user_model.dart';
 import 'package:agile_development_project/app/infra/model/type_user_model.dart';
 import 'package:agile_development_project/app/presenter/dashboard/cubit/dashboard_cubit.dart';
+import 'package:agile_development_project/app/presenter/widgets/alert_message/cubit/alert_message_cubit.dart';
 import 'package:agile_development_project/app/presenter/widgets/button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -132,7 +134,9 @@ class _AddColabDialogState extends State<AddColabDialog> {
                 ButtonForm(
                   onPressed: () {
                     if (selectedUser != null) {
-                      context.read<DashboardCubit>().insertProjectuser(
+                      context
+                          .read<DashboardCubit>()
+                          .insertProjectuser(
                             ProjectUserModel(
                               email: selectedUser!.email,
                               idProject: widget.project.idProject,
@@ -142,7 +146,18 @@ class _AddColabDialogState extends State<AddColabDialog> {
                                   typeUser: _value == 1 ? 'admin' : 'colab'),
                               user: selectedUser!.user,
                             ),
-                          );
+                          )
+                          .then((value) {
+                        formKey.currentContext!
+                            .read<AlertMessageCubit>()
+                            .showMessage(
+                                value
+                                    ? 'Colaborador ${selectedUser!.user} adicionado ao projeto'
+                                    : 'Erro ao adicionar o colaborador',
+                                value
+                                    ? StatusMessage.success
+                                    : StatusMessage.erro);
+                      });
                       Navigator.pop(context);
                     }
                   },

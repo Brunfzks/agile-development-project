@@ -1,3 +1,4 @@
+import 'package:agile_development_project/app/presenter/dashboard/dashboard.dart';
 import 'package:agile_development_project/app/presenter/main/cubit/main_cubit.dart';
 import 'package:agile_development_project/app/presenter/main/widgets/side_menu.dart';
 import 'package:agile_development_project/app/config/responsive.dart';
@@ -7,8 +8,20 @@ import 'package:agile_development_project/app/presenter/widgets/alert_message/cu
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class MainScreen extends StatelessWidget {
+class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
+
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  final List<Widget> telas = [];
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +55,6 @@ class MainScreen extends StatelessWidget {
               width: state.messages.isNotEmpty ? 450 : 0,
               height: state.messages.length * 70,
               child: ListView.builder(
-                  key: state.listKey,
                   itemCount: state.messages.length,
                   itemBuilder: (context, index) {
                     return AlertMessageWidget(

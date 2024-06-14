@@ -66,7 +66,8 @@ class DashboardCubit extends Cubit<DashboardState> {
     emit(state.copyWith(project: project));
   }
 
-  Future<void> insertProjectuser(ProjectUserModel projecuser) async {
+  Future<bool> insertProjectuser(ProjectUserModel projecuser) async {
+    var retorno = false;
     emit(
       state.copyWith(status: DashboardStatus.loading),
     );
@@ -94,7 +95,9 @@ class DashboardCubit extends Cubit<DashboardState> {
         project: state.project,
         status: DashboardStatus.completed,
       ));
+      retorno = true;
     });
+    return retorno;
   }
 
   Future<void> createStatus(String description) async {
