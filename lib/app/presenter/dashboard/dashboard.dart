@@ -1,10 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:agile_development_project/app/config/const_color.dart';
 import 'package:agile_development_project/app/config/const_parameters.dart';
+import 'package:agile_development_project/app/domain/entities/alert_message.dart';
 import 'package:agile_development_project/app/presenter/dashboard/cubit/dashboard_cubit.dart';
 import 'package:agile_development_project/app/presenter/dashboard/widget/add_colab_dialog.dart';
 import 'package:agile_development_project/app/presenter/dashboard/widget/create_group_dialog.dart';
-import 'package:agile_development_project/app/presenter/main/cubit/main_cubit.dart';
 import 'package:agile_development_project/app/presenter/projects/cubit/project_cubit.dart';
 import 'package:agile_development_project/app/presenter/widgets/alert_message/alert_message.dart';
 import 'package:agile_development_project/app/presenter/widgets/alert_message/cubit/alert_message_cubit.dart';
@@ -33,23 +33,25 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  final AppFlowyBoardController controller = AppFlowyBoardController(
-    onMoveGroup: (fromGroupId, fromIndex, toGroupId, toIndex) {
-      debugPrint('Move item from $fromIndex to $toIndex');
-    },
-    onMoveGroupItem: (groupId, fromIndex, toIndex) {
-      debugPrint('Move $groupId:$fromIndex to $groupId:$toIndex');
-    },
-    onMoveGroupItemToGroup: (fromGroupId, fromIndex, toGroupId, toIndex) {
-      debugPrint('Move $fromGroupId:$fromIndex to $toGroupId:$toIndex');
-    },
-  );
-
+  late AppFlowyBoardController controller;
   final GlobalKey<_DashboardState> dashbordKey = GlobalKey();
 
   @override
   void initState() {
     context.read<DashboardCubit>().getProject(widget.project);
+    controller = AppFlowyBoardController(
+      onMoveGroup: (fromGroupId, fromIndex, toGroupId, toIndex) {
+        debugPrint('Move item from $fromIndex to $toIndex');
+
+        context.read<DashboardCubit>().moveGroup(controller.groupIds);
+      },
+      onMoveGroupItem: (groupId, fromIndex, toIndex) {
+        debugPrint('Move $groupId:$fromIndex to $groupId:$toIndex');
+      },
+      onMoveGroupItemToGroup: (fromGroupId, fromIndex, toGroupId, toIndex) {
+        debugPrint('Move $fromGroupId:$fromIndex to $toGroupId:$toIndex');
+      },
+    );
     controller.addGroups(context.read<DashboardCubit>().returnGroupData());
     super.initState();
   }
@@ -103,7 +105,14 @@ class _DashboardState extends State<Dashboard> {
                                                 cursor:
                                                     SystemMouseCursors.click,
                                                 child: GestureDetector(
-                                                  onTap: () async {
+                                                  onTap: () {
+                                                    if (!context
+                                                        .read<ProjectCubit>()
+                                                        .verifyProjectType(
+                                                            widget.user.idUser,
+                                                            widget.project)) {
+                                                      return;
+                                                    }
                                                     context
                                                         .read<DashboardCubit>()
                                                         .getUsers();
@@ -141,32 +150,29 @@ class _DashboardState extends State<Dashboard> {
                                                 onSelected: (value) {
                                                   switch (value) {
                                                     case 'Excluir':
+                                                      var user = state.project
+                                                          .projectUsers[index];
                                                       context
-                                                          .read<ProjectCubit>()
-                                                          .deleteProjects(
-                                                              project)
-                                                          .then((value) {
-                                                        if (!context.mounted) {
-                                                          return;
-                                                        }
-                                                        context
-                                                            .read<
-                                                                AlertMessageCubit>()
-                                                            .showMessage(
-                                                                value
-                                                                    ? 'Projeto ${project.description} excluido com sucesso!'
-                                                                    : 'Erro ao excluir o projeto!',
-                                                                value
-                                                                    ? StatusMessage
-                                                                        .success
-                                                                    : StatusMessage
-                                                                        .erro);
-                                                      });
-                                                      break;
-                                                    case 'Alterar':
-                                                      _alterProjectDialog(
-                                                          context: context,
-                                                          project: project);
+                                                          .read<
+                                                              DashboardCubit>()
+                                                          .deleteProjectuser(
+                                                              user)
+                                                          .then(
+                                                            (value) => dashbordKey
+                                                                .currentContext!
+                                                                .read<
+                                                                    AlertMessageCubit>()
+                                                                .showMessage(
+                                                                  value
+                                                                      ? 'Colaborador ${user.user} Removido do projeto'
+                                                                      : 'Erro ao remover o colaborador',
+                                                                  value
+                                                                      ? StatusMessage
+                                                                          .success
+                                                                      : StatusMessage
+                                                                          .erro,
+                                                                ),
+                                                          );
                                                       break;
                                                   }
                                                 },
@@ -191,12 +197,21 @@ class _DashboardState extends State<Dashboard> {
                                                     ),
                                                     PopupMenuItem(
                                                       enabled: !(state
-                                                              .project
-                                                              .projectUsers[
-                                                                  index]
-                                                              .idUser ==
-                                                          widget.user.idUser),
-                                                      value: 'Exluir',
+                                                                  .project
+                                                                  .projectUsers[
+                                                                      index]
+                                                                  .idUser ==
+                                                              widget.user
+                                                                  .idUser) &&
+                                                          context
+                                                              .read<
+                                                                  ProjectCubit>()
+                                                              .verifyProjectType(
+                                                                  widget.user
+                                                                      .idUser,
+                                                                  widget
+                                                                      .project),
+                                                      value: 'Excluir',
                                                       child: const Row(
                                                         children: [
                                                           Icon(Icons.delete),
@@ -238,6 +253,12 @@ class _DashboardState extends State<Dashboard> {
                               ),
                             ),
                             onPressed: () {
+                              if (!context
+                                  .read<ProjectCubit>()
+                                  .verifyProjectType(
+                                      widget.user.idUser, widget.project)) {
+                                return;
+                              }
                               _alterGroupDialog();
                             },
                             icon: const Icon(Icons.add),
@@ -258,7 +279,36 @@ class _DashboardState extends State<Dashboard> {
                         headerBuilder: (context, group) {
                           return AppFlowyGroupHeader(
                             addIcon: const Icon(Icons.add),
+                            moreIcon: const Icon(Icons.remove),
                             margin: const EdgeInsets.all(8),
+                            onMoreButtonClick: () {
+                              if (!context
+                                  .read<ProjectCubit>()
+                                  .verifyProjectType(
+                                      widget.user.idUser, widget.project)) {
+                                return;
+                              }
+
+                              context
+                                  .read<DashboardCubit>()
+                                  .deleteStatus(context
+                                      .read<DashboardCubit>()
+                                      .state
+                                      .project
+                                      .statusProjectTask
+                                      .firstWhere((value) =>
+                                          value.idStatusProjectTask ==
+                                          int.parse(group.id)))
+                                  .then((value) {
+                                controller.clear();
+                                controller.addGroups(dashbordKey.currentContext!
+                                    .read<DashboardCubit>()
+                                    .returnGroupData());
+                                dashbordKey.currentContext!
+                                    .read<DashboardCubit>()
+                                    .moveGroup(controller.groupIds);
+                              });
+                            },
                             title: Text(group.headerData.groupName),
                           );
                         },

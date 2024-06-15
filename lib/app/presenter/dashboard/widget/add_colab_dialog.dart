@@ -138,6 +138,7 @@ class _AddColabDialogState extends State<AddColabDialog> {
                           .read<DashboardCubit>()
                           .insertProjectuser(
                             ProjectUserModel(
+                              idProjectUser: 0,
                               email: selectedUser!.email,
                               idProject: widget.project.idProject,
                               idUser: selectedUser!.idUser,

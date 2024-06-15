@@ -2,7 +2,6 @@
 import 'dart:convert';
 
 import 'package:agile_development_project/app/domain/entities/user.dart';
-import 'package:agile_development_project/app/infra/model/project_model.dart';
 
 class UserModel implements User {
   @override

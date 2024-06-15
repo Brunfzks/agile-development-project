@@ -4,8 +4,11 @@ import 'package:agile_development_project/app/infra/model/project_user_model.dar
 import 'package:agile_development_project/app/infra/model/status_project_task_model.dart';
 import 'package:agile_development_project/app/infra/repositories/projectuser_repository_impl.dart';
 import 'package:agile_development_project/app/infra/repositories/status_repository_impl.dart';
+import 'package:agile_development_project/app/usescases/projectUser/delete_projectuser_usecase.dart';
 import 'package:agile_development_project/app/usescases/projectUser/get_users_usecase.dart';
 import 'package:agile_development_project/app/usescases/projectUser/insert_projectuser_usescase.dart';
+import 'package:agile_development_project/app/usescases/status/change_order_usecase.dart';
+import 'package:agile_development_project/app/usescases/status/delete_status_usecase.dart';
 import 'package:agile_development_project/app/usescases/status/insert_status_usecase.dart';
 import 'package:appflowy_board/appflowy_board.dart';
 import 'package:bloc/bloc.dart';
@@ -30,6 +33,53 @@ class DashboardCubit extends Cubit<DashboardState> {
           name: statusProjectTask.status));
     }
     return groups;
+  }
+
+  void moveGroup(List<String> listids) async {
+    List<StatusProjectTaskModel> tasks = [];
+    for (var index = 0; index < listids.length; index++) {
+      tasks.add(state.project.statusProjectTask.firstWhere(
+          (value) => value.idStatusProjectTask == int.parse(listids[index])));
+      tasks[index] = StatusProjectTaskModel(
+          idProject: tasks[index].idProject,
+          idStatusProjectTask: tasks[index].idStatusProjectTask,
+          status: tasks[index].status,
+          ordem: index);
+    }
+
+    state.project.statusProjectTask.clear();
+    state.project.statusProjectTask.addAll(tasks);
+
+    emit(
+      state.copyWith(
+        project: state.project,
+        status: DashboardStatus.loading,
+      ),
+    );
+
+    final result = await ChangeStatusOrder(
+      repository: _statusRepositoryImpl,
+    ).call(
+      ParamsChangeStatusOrder(status: state.project.statusProjectTask),
+    );
+
+    result.fold((StatusExeption exception) {
+      if (exception.message == 'USUARIO INVALIDO') {
+        emit(state.copyWith(
+          status: DashboardStatus.error,
+          error: exception.message,
+        ));
+      } else {
+        emit(state.copyWith(
+          status: DashboardStatus.error,
+          error: exception.message,
+        ));
+      }
+    }, (bool value) {
+      emit(state.copyWith(
+        status: DashboardStatus.completed,
+      ));
+    });
   }
 
   void getUsers() async {
@@ -89,8 +139,76 @@ class DashboardCubit extends Cubit<DashboardState> {
           error: exception.message,
         ));
       }
+    }, (ProjectUserModel projectUser) {
+      state.project.projectUsers.add(projectUser);
+      emit(state.copyWith(
+        project: state.project,
+        status: DashboardStatus.completed,
+      ));
+      retorno = true;
+    });
+    return retorno;
+  }
+
+  Future<bool> deleteProjectuser(ProjectUserModel projecuser) async {
+    var retorno = false;
+    emit(
+      state.copyWith(status: DashboardStatus.loading),
+    );
+    final result = await DeleteProjectUsers(
+      repository: _projectuserRepositoryImpl,
+    ).call(
+      ParamsDeleteProjectUser(projectUserModel: projecuser),
+    );
+
+    result.fold((ProjectUsersExeption exception) {
+      if (exception.message == 'USUARIO INVALIDO') {
+        emit(state.copyWith(
+          status: DashboardStatus.error,
+          error: exception.message,
+        ));
+      } else {
+        emit(state.copyWith(
+          status: DashboardStatus.error,
+          error: exception.message,
+        ));
+      }
     }, (bool status) {
-      state.project.projectUsers.add(projecuser);
+      state.project.projectUsers.remove(projecuser);
+      emit(state.copyWith(
+        project: state.project,
+        status: DashboardStatus.completed,
+      ));
+      retorno = true;
+    });
+    return retorno;
+  }
+
+  Future<bool> deleteStatus(StatusProjectTaskModel statusTask) async {
+    var retorno = false;
+    emit(
+      state.copyWith(status: DashboardStatus.loading),
+    );
+    final result = await DeleteStatus(
+      repository: _statusRepositoryImpl,
+    ).call(
+      ParamsDeleteStatus(status: statusTask),
+    );
+
+    result.fold((StatusExeption exception) {
+      if (exception.message == 'USUARIO INVALIDO') {
+        emit(state.copyWith(
+          status: DashboardStatus.error,
+          error: exception.message,
+        ));
+      } else {
+        emit(state.copyWith(
+          status: DashboardStatus.error,
+          error: exception.message,
+        ));
+      }
+    }, (bool status) {
+      state.project.statusProjectTask.remove(statusTask);
       emit(state.copyWith(
         project: state.project,
         status: DashboardStatus.completed,
@@ -111,7 +229,7 @@ class DashboardCubit extends Cubit<DashboardState> {
           status: StatusProjectTaskModel(
               idProject: state.project.idProject,
               idStatusProjectTask: 0,
-              ordem: state.project.statusProjectTask.length + 1,
+              ordem: state.project.statusProjectTask.length,
               status: description)),
     );
 

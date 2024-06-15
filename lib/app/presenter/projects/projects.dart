@@ -103,6 +103,7 @@ _createProjectDialog({
                     idProject: 0,
                     projectUsers: [
                       ProjectUserModel(
+                        idProjectUser: 0,
                         email: user.email,
                         idProject: 0,
                         idUser: user.idUser,

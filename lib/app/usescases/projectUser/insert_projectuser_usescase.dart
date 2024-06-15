@@ -6,7 +6,7 @@ import 'package:agile_development_project/app/domain/repository/project_user_rep
 import 'package:agile_development_project/app/infra/model/project_user_model.dart';
 
 abstract class IInsertProjectUsers {
-  Future<Either<ProjectUsersExeption, bool>> call(
+  Future<Either<ProjectUsersExeption, ProjectUserModel>> call(
       ParamsInsertProjectUser params);
 }
 
@@ -17,7 +17,7 @@ class InsertProjectUsers implements IInsertProjectUsers {
   });
 
   @override
-  Future<Either<ProjectUsersExeption, bool>> call(
+  Future<Either<ProjectUsersExeption, ProjectUserModel>> call(
       ParamsInsertProjectUser params) async {
     if (params.projectUserModel.email.isEmpty ||
         params.projectUserModel.idProject.isNaN ||

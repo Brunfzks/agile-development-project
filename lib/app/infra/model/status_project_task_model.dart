@@ -37,7 +37,7 @@ class StatusProjectTaskModel implements StatusProjectTask {
       idProject: map['idProject'] as int,
       idStatusProjectTask: map['idStatusProjectTask'] as int,
       status: map['status'] as String,
-      ordem: map['ordem'] as int,
+      ordem: map['ordem'] ?? 0,
     );
   }
 

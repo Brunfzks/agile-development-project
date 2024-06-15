@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:agile_development_project/app/domain/entities/project_user.dart';
@@ -19,12 +20,16 @@ class ProjectUserModel implements ProjectUser {
   @override
   final String user;
 
+  @override
+  final int idProjectUser;
+
   ProjectUserModel({
     required this.email,
     required this.idProject,
     required this.idUser,
     required this.typeUser,
     required this.user,
+    required this.idProjectUser,
   });
 
   Map<String, dynamic> toMap() {
@@ -34,6 +39,7 @@ class ProjectUserModel implements ProjectUser {
       'idUser': idUser,
       'typeUser': typeUser.toMap(),
       'user': user,
+      'idProjectUser': idProjectUser,
     };
   }
 
@@ -42,10 +48,9 @@ class ProjectUserModel implements ProjectUser {
       email: map['email'] as String,
       idProject: map['idProject'] ?? 0,
       idUser: map['idUser'] as int,
-      typeUser: map['typeUser'] != null
-          ? TypeUserModel.fromMap(map['typeUser'] as Map<String, dynamic>)
-          : TypeUserModel(idTypeUser: 0, typeUser: ''),
+      typeUser: TypeUserModel.fromMap(map['typeUser'] as Map<String, dynamic>),
       user: map['user'] as String,
+      idProjectUser: map['idProjectUsers'] ?? 0,
     );
   }
 

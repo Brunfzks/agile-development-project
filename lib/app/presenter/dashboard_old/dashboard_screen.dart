@@ -2,8 +2,6 @@ import 'package:agile_development_project/app/config/const_parameters.dart';
 import 'package:agile_development_project/app/config/responsive.dart';
 import 'package:flutter/material.dart';
 
-import '../widgets/header.dart';
-
 import 'widgets/recent_files.dart';
 import 'widgets/storage_details.dart';
 

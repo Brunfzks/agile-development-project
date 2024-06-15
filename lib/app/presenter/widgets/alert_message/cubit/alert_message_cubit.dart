@@ -1,7 +1,6 @@
 import 'package:agile_development_project/app/domain/entities/alert_message.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 
 part 'alert_message_state.dart';
 

@@ -1,4 +1,3 @@
-import 'package:agile_development_project/app/presenter/dashboard/dashboard.dart';
 import 'package:agile_development_project/app/presenter/main/cubit/main_cubit.dart';
 import 'package:agile_development_project/app/presenter/main/widgets/side_menu.dart';
 import 'package:agile_development_project/app/config/responsive.dart';

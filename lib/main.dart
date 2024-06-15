@@ -1,5 +1,4 @@
 import 'package:agile_development_project/app/config/const_color.dart';
-import 'package:agile_development_project/app/domain/repository/status_repository.dart';
 import 'package:agile_development_project/app/external/api_go/project_api_go.dart';
 import 'package:agile_development_project/app/external/api_go/projectuser_api_go.dart';
 import 'package:agile_development_project/app/external/api_go/status_api_go.dart';
