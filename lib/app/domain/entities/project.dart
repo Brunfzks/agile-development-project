@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:agile_development_project/app/infra/model/project_user_model.dart';
 import 'package:agile_development_project/app/infra/model/status_project_task_model.dart';
+import 'package:agile_development_project/app/infra/model/task_model.dart';
 
 class Project {
   final int idProject;
@@ -8,7 +9,9 @@ class Project {
   final String feedback;
   final List<ProjectUserModel> projectUsers;
   final List<StatusProjectTaskModel> statusProjectTask;
+  final List<TaskModel> tasks;
   Project({
+    required this.tasks,
     required this.idProject,
     required this.description,
     required this.feedback,

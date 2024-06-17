@@ -2,10 +2,12 @@ import 'package:agile_development_project/app/config/const_color.dart';
 import 'package:agile_development_project/app/external/api_go/project_api_go.dart';
 import 'package:agile_development_project/app/external/api_go/projectuser_api_go.dart';
 import 'package:agile_development_project/app/external/api_go/status_api_go.dart';
+import 'package:agile_development_project/app/external/api_go/task_api_go.dart';
 import 'package:agile_development_project/app/external/api_go/user_api_go.dart';
 import 'package:agile_development_project/app/infra/repositories/project_repository_impl.dart';
 import 'package:agile_development_project/app/infra/repositories/projectuser_repository_impl.dart';
 import 'package:agile_development_project/app/infra/repositories/status_repository_impl.dart';
+import 'package:agile_development_project/app/infra/repositories/task_repositoy_impl.dart';
 import 'package:agile_development_project/app/infra/repositories/user_repository_impl.dart';
 import 'package:agile_development_project/app/presenter/dashboard/cubit/dashboard_cubit.dart';
 import 'package:agile_development_project/app/presenter/login/cubit/login_cubit.dart';
@@ -37,6 +39,8 @@ void main() {
   GetIt.instance.registerSingleton<ProjectUserRepositoryImpl>(
       ProjectUserRepositoryImpl(
           datasource: ProjectuserApiGo(dio: GetIt.I<Dio>())));
+  GetIt.instance.registerSingleton<TaskRepositoyImpl>(
+      TaskRepositoyImpl(datasource: TaskApiGo(dio: GetIt.I<Dio>())));
 }
 
 class MyApp extends StatelessWidget {

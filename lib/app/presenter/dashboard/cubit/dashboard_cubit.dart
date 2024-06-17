@@ -2,14 +2,18 @@ import 'package:agile_development_project/app/domain/errors/errors.dart';
 import 'package:agile_development_project/app/infra/model/project_model.dart';
 import 'package:agile_development_project/app/infra/model/project_user_model.dart';
 import 'package:agile_development_project/app/infra/model/status_project_task_model.dart';
+import 'package:agile_development_project/app/infra/model/task_model.dart';
 import 'package:agile_development_project/app/infra/repositories/projectuser_repository_impl.dart';
 import 'package:agile_development_project/app/infra/repositories/status_repository_impl.dart';
+import 'package:agile_development_project/app/infra/repositories/task_repositoy_impl.dart';
+import 'package:agile_development_project/app/presenter/dashboard/dashboard.dart';
 import 'package:agile_development_project/app/usescases/projectUser/delete_projectuser_usecase.dart';
 import 'package:agile_development_project/app/usescases/projectUser/get_users_usecase.dart';
 import 'package:agile_development_project/app/usescases/projectUser/insert_projectuser_usescase.dart';
 import 'package:agile_development_project/app/usescases/status/change_order_usecase.dart';
 import 'package:agile_development_project/app/usescases/status/delete_status_usecase.dart';
 import 'package:agile_development_project/app/usescases/status/insert_status_usecase.dart';
+import 'package:agile_development_project/app/usescases/task/update_task_usecase.dart';
 import 'package:appflowy_board/appflowy_board.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -24,13 +28,24 @@ class DashboardCubit extends Cubit<DashboardState> {
       GetIt.I<StatusRepositoryImpl>();
   final ProjectUserRepositoryImpl _projectuserRepositoryImpl =
       GetIt.I<ProjectUserRepositoryImpl>();
+  final TaskRepositoyImpl _taskRepositoryImpl = GetIt.I<TaskRepositoyImpl>();
 
   List<AppFlowyGroupData> returnGroupData() {
     List<AppFlowyGroupData> groups = [];
     for (var statusProjectTask in state.project.statusProjectTask) {
       groups.add(AppFlowyGroupData(
           id: statusProjectTask.idStatusProjectTask.toString(),
-          name: statusProjectTask.status));
+          name: statusProjectTask.status,
+          items: List<AppFlowyGroupItem>.from(state.project.tasks
+              .where((value) =>
+                  value.idStatus == statusProjectTask.idStatusProjectTask)
+              .map(
+                (x) => TextItem(
+                  x.idTask.toString(),
+                  x,
+                ),
+              )
+              .toList())));
     }
     return groups;
   }
@@ -247,6 +262,39 @@ class DashboardCubit extends Cubit<DashboardState> {
       }
     }, (StatusProjectTaskModel status) {
       state.project.statusProjectTask.add(status);
+      emit(state.copyWith(
+        project: state.project,
+        status: DashboardStatus.completed,
+      ));
+    });
+  }
+
+  void updateTask(TaskModel task) async {
+    emit(
+      state.copyWith(status: DashboardStatus.loading),
+    );
+    final result = await UpdateTask(
+      repository: _taskRepositoryImpl,
+    ).call(
+      ParamsUpdateTask(task: task),
+    );
+
+    result.fold((TaskExeption exception) {
+      if (exception.message == 'USUARIO INVALIDO') {
+        emit(state.copyWith(
+          status: DashboardStatus.error,
+          error: exception.message,
+        ));
+      } else {
+        emit(state.copyWith(
+          status: DashboardStatus.error,
+          error: exception.message,
+        ));
+      }
+    }, (bool value) {
+      var index = state.project.tasks
+          .indexWhere((value) => value.idTask == task.idTask);
+      state.project.tasks[index] = task;
       emit(state.copyWith(
         project: state.project,
         status: DashboardStatus.completed,

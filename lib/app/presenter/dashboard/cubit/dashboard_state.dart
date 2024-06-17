@@ -21,6 +21,7 @@ class DashboardState extends Equatable {
       error: '',
       status: DashboardStatus.initial,
       project: ProjectModel(
+        tasks: [],
         description: '',
         feedback: '',
         idProject: 0,

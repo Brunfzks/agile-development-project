@@ -9,7 +9,7 @@ class FormFieldWidget extends StatelessWidget {
     super.key,
     this.maskFormatter,
     required this.hintText,
-    required this.icon,
+    this.icon,
     required this.controller,
     this.enable = true,
     this.isPassword = false,
@@ -18,10 +18,12 @@ class FormFieldWidget extends StatelessWidget {
     this.minLines = 1,
     this.textStyle,
     this.onchange,
+    this.outlineInputBorder,
+    this.backgroundColor,
   });
 
   final String hintText;
-  final Icon icon;
+  final Icon? icon;
   final TextInputFormatter? maskFormatter;
   final TextEditingController controller;
   final bool enable;
@@ -31,6 +33,8 @@ class FormFieldWidget extends StatelessWidget {
   final int minLines;
   final TextStyle? textStyle;
   final Function(String)? onchange;
+  final InputBorder? outlineInputBorder;
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -46,15 +50,18 @@ class FormFieldWidget extends StatelessWidget {
         controller: controller,
         inputFormatters: [maskFormatter ?? MaskTextInputFormatter()],
         decoration: InputDecoration(
-          fillColor: ConstColors.backGroundColor.withAlpha(70),
+          fillColor:
+              backgroundColor ?? ConstColors.backGroundColor.withAlpha(70),
           filled: true,
           hintText: hintText,
           hintStyle: textStyle ?? ConstText.formFieldText,
           prefixIcon: icon,
-          border: OutlineInputBorder(
-            borderSide: const BorderSide(width: 1, color: Color(0xFFDFE4EC)),
-            borderRadius: BorderRadius.circular(30),
-          ),
+          border: outlineInputBorder ??
+              OutlineInputBorder(
+                borderSide:
+                    const BorderSide(width: 1, color: Color(0xFFDFE4EC)),
+                borderRadius: BorderRadius.circular(30),
+              ),
         ),
       ),
     );

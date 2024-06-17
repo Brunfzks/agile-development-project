@@ -159,6 +159,7 @@ _alterProjectDialog({
             context
                 .read<ProjectCubit>()
                 .updateProjects(ProjectModel(
+                    tasks: project.tasks,
                     statusProjectTask: project.statusProjectTask,
                     description: projectDescriptionController.text,
                     feedback: project.feedback,

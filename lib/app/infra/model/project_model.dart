@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:agile_development_project/app/domain/entities/project.dart';
 import 'package:agile_development_project/app/infra/model/project_user_model.dart';
 import 'package:agile_development_project/app/infra/model/status_project_task_model.dart';
+import 'package:agile_development_project/app/infra/model/task_model.dart';
 
 class ProjectModel implements Project {
   @override
@@ -19,6 +20,8 @@ class ProjectModel implements Project {
 
   @override
   final List<StatusProjectTaskModel> statusProjectTask;
+  @override
+  final List<TaskModel> tasks;
 
   ProjectModel({
     required this.description,
@@ -26,6 +29,7 @@ class ProjectModel implements Project {
     required this.idProject,
     required this.projectUsers,
     required this.statusProjectTask,
+    required this.tasks,
   });
 
   Map<String, dynamic> toMap() {
@@ -35,6 +39,7 @@ class ProjectModel implements Project {
       'idProject': idProject,
       'projectUsers': projectUsers.map((x) => x.toMap()).toList(),
       'statusProjectTask': statusProjectTask.map((x) => x.toMap()).toList(),
+      'tasks': tasks.map((x) => x.toMap()).toList(),
     };
   }
 
@@ -51,6 +56,11 @@ class ProjectModel implements Project {
       statusProjectTask: List<StatusProjectTaskModel>.from(
         (map['status'] ?? []).map<StatusProjectTaskModel>(
           (x) => StatusProjectTaskModel.fromMap(x as Map<String, dynamic>),
+        ),
+      ),
+      tasks: List<TaskModel>.from(
+        (map['tasks'] ?? []).map<TaskModel>(
+          (x) => TaskModel.fromMap(x as Map<String, dynamic>),
         ),
       ),
     );

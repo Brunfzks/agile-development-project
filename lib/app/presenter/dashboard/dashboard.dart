@@ -1,22 +1,26 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:agile_development_project/app/config/const_text.dart';
+import 'package:agile_development_project/app/infra/model/task_model.dart';
+import 'package:agile_development_project/app/presenter/widgets/field_form_widget.dart';
+import 'package:appflowy_board/appflowy_board.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:agile_development_project/app/config/const_color.dart';
 import 'package:agile_development_project/app/config/const_parameters.dart';
+import 'package:agile_development_project/app/config/responsive.dart';
 import 'package:agile_development_project/app/domain/entities/alert_message.dart';
+import 'package:agile_development_project/app/infra/model/project_model.dart';
+import 'package:agile_development_project/app/infra/model/user_model.dart';
 import 'package:agile_development_project/app/presenter/dashboard/cubit/dashboard_cubit.dart';
 import 'package:agile_development_project/app/presenter/dashboard/widget/add_colab_dialog.dart';
 import 'package:agile_development_project/app/presenter/dashboard/widget/create_group_dialog.dart';
+import 'package:agile_development_project/app/presenter/main/widgets/side_menu.dart';
 import 'package:agile_development_project/app/presenter/projects/cubit/project_cubit.dart';
 import 'package:agile_development_project/app/presenter/widgets/alert_message/alert_message.dart';
 import 'package:agile_development_project/app/presenter/widgets/alert_message/cubit/alert_message_cubit.dart';
-import 'package:appflowy_board/appflowy_board.dart';
-import 'package:flutter/material.dart';
-
-import 'package:agile_development_project/app/config/responsive.dart';
-import 'package:agile_development_project/app/infra/model/project_model.dart';
-import 'package:agile_development_project/app/infra/model/user_model.dart';
-import 'package:agile_development_project/app/presenter/main/widgets/side_menu.dart';
 import 'package:agile_development_project/app/presenter/widgets/header.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({
@@ -53,6 +57,7 @@ class _DashboardState extends State<Dashboard> {
       },
     );
     controller.addGroups(context.read<DashboardCubit>().returnGroupData());
+
     super.initState();
   }
 
@@ -316,8 +321,12 @@ class _DashboardState extends State<Dashboard> {
                         cardBuilder: (context, group, groupItem) {
                           final textItem = groupItem as TextItem;
                           return AppFlowyGroupCard(
-                            decoration: const BoxDecoration(color: Colors.red),
+                            decoration: const BoxDecoration(
+                                color: Colors.white,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10))),
                             key: ObjectKey(textItem),
+                            child: cardTask(textItem),
                           );
                         },
                         footerBuilder: (context, group) {
@@ -351,6 +360,82 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
+  SizedBox cardTask(TextItem textItem) {
+    Color priority;
+    switch (textItem.task.priority) {
+      case 1:
+        priority = ConstColors.sucessColor;
+        break;
+      case 2:
+        priority = ConstColors.warningColor;
+        break;
+      case 3:
+        priority = ConstColors.erroColor;
+        break;
+      default:
+        priority = ConstColors.sucessColor;
+        break;
+    }
+    return SizedBox(
+      width: 240,
+      child: Column(
+        children: [
+          Container(
+            height: 8,
+            decoration: BoxDecoration(color: priority),
+          ),
+          const SizedBox(
+            height: 5,
+          ),
+          FormFieldWidget(
+            backgroundColor: ConstColors.complementaryColor,
+            outlineInputBorder: InputBorder.none,
+            maxLines: 20,
+            controller: textItem.controller,
+            hintText: 'Descrição',
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(right: 5),
+                width: 20,
+                height: 20,
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(40)),
+                  color: ConstColors.backGroundColor,
+                ),
+                child: Center(
+                  child: Text(
+                    context
+                        .read<DashboardCubit>()
+                        .state
+                        .project
+                        .projectUsers
+                        .firstWhere(
+                            (value) => value.idUser == textItem.task.idUser)
+                        .user
+                        .characters
+                        .first
+                        .toUpperCase(),
+                  ),
+                ),
+              ),
+              TextButton(
+                  onPressed: () {
+                    _alterDataPicker((data) {});
+                  },
+                  child: Text(
+                    '${textItem.task.deadLine.day}/${textItem.task.deadLine.month}/${textItem.task.deadLine.year}',
+                    style: ConstText.formFieldText,
+                  )),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   _alterGroupDialog() {
     TextEditingController projectDescriptionController =
         TextEditingController();
@@ -377,6 +462,26 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
+  _alterDataPicker(
+      Function(DateRangePickerSelectionChangedArgs)? _onSelectionChanged) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: SizedBox(
+            width: 300,
+            height: 300,
+            child: SfDateRangePicker(
+              onSelectionChanged: _onSelectionChanged,
+              selectionMode: DateRangePickerSelectionMode.single,
+              initialSelectedDate: DateTime.now().add(const Duration(days: 1)),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   _addColabDialog() {
     TextEditingController projectDescriptionController =
         TextEditingController();
@@ -396,7 +501,13 @@ class _DashboardState extends State<Dashboard> {
 
 class TextItem extends AppFlowyGroupItem {
   final String s;
-  TextItem(this.s);
+  final TaskModel task;
+  final TextEditingController controller = TextEditingController();
+
+  TextItem(
+    this.s,
+    this.task,
+  );
 
   @override
   String get id => s;
