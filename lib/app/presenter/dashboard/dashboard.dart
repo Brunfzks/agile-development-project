@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:agile_development_project/app/config/const_text.dart';
+import 'package:agile_development_project/app/infra/model/project_user_model.dart';
 import 'package:agile_development_project/app/infra/model/task_model.dart';
 import 'package:agile_development_project/app/presenter/widgets/field_form_widget.dart';
 import 'package:appflowy_board/appflowy_board.dart';
@@ -53,7 +54,33 @@ class _DashboardState extends State<Dashboard> {
         debugPrint('Move $groupId:$fromIndex to $groupId:$toIndex');
       },
       onMoveGroupItemToGroup: (fromGroupId, fromIndex, toGroupId, toIndex) {
-        debugPrint('Move $fromGroupId:$fromIndex to $toGroupId:$toIndex');
+        var task = context
+            .read<DashboardCubit>()
+            .state
+            .project
+            .tasks
+            .where((value) => value.idStatus.toString() == fromGroupId)
+            .toList();
+
+        context
+            .read<DashboardCubit>()
+            .updateTask(TaskModel(
+              deadLine: task[fromIndex].deadLine,
+              description: task[fromIndex].description,
+              idProject: task[fromIndex].idProject,
+              idStatus: int.parse(toGroupId),
+              idTask: task[fromIndex].idTask,
+              idUser: task[fromIndex].idUser,
+              ordem: toIndex,
+              priority: task[fromIndex].priority,
+            ))
+            .then((value) {
+          if (!value) return;
+
+          controller.clear();
+          controller
+              .addGroups(context.read<DashboardCubit>().returnGroupData());
+        });
       },
     );
     controller.addGroups(context.read<DashboardCubit>().returnGroupData());
@@ -380,14 +407,104 @@ class _DashboardState extends State<Dashboard> {
       width: 240,
       child: Column(
         children: [
-          Container(
-            height: 8,
-            decoration: BoxDecoration(color: priority),
+          PopupMenuButton(
+            onSelected: (value) {
+              if (textItem.task.priority == value) {
+                return;
+              }
+              context
+                  .read<DashboardCubit>()
+                  .updateTask(TaskModel(
+                    deadLine: textItem.task.deadLine,
+                    description: textItem.controller.text,
+                    idProject: textItem.task.idProject,
+                    idStatus: textItem.task.idStatus,
+                    idTask: textItem.task.idTask,
+                    idUser: textItem.task.idUser,
+                    ordem: textItem.task.ordem,
+                    priority: value,
+                  ))
+                  .then((value) {
+                if (!value) return;
+
+                controller.clear();
+                controller.addGroups(
+                    context.read<DashboardCubit>().returnGroupData());
+              });
+            },
+            itemBuilder: (context) {
+              return const [
+                PopupMenuItem(
+                  value: 1,
+                  child: Row(
+                    children: [
+                      Icon(Icons.auto_awesome),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text('Low Priority'),
+                    ],
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 2,
+                  child: Row(
+                    children: [
+                      Icon(Icons.assignment_late),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text('Normal Priority'),
+                    ],
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 3,
+                  child: Row(
+                    children: [
+                      Icon(Icons.warning),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text('Top Priority'),
+                    ],
+                  ),
+                ),
+              ];
+            },
+            child: Container(
+              height: 8,
+              decoration: BoxDecoration(color: priority),
+            ),
           ),
           const SizedBox(
             height: 5,
           ),
           FormFieldWidget(
+            onTapOutside: (value) {
+              if (textItem.task.description == textItem.controller.text) {
+                return;
+              }
+              context
+                  .read<DashboardCubit>()
+                  .updateTask(TaskModel(
+                    deadLine: textItem.task.deadLine,
+                    description: textItem.controller.text,
+                    idProject: textItem.task.idProject,
+                    idStatus: textItem.task.idStatus,
+                    idTask: textItem.task.idTask,
+                    idUser: textItem.task.idUser,
+                    ordem: textItem.task.ordem,
+                    priority: textItem.task.priority,
+                  ))
+                  .then((value) {
+                if (!value) return;
+
+                controller.clear();
+                controller.addGroups(
+                    context.read<DashboardCubit>().returnGroupData());
+              });
+            },
             backgroundColor: ConstColors.complementaryColor,
             outlineInputBorder: InputBorder.none,
             maxLines: 20,
@@ -405,25 +522,101 @@ class _DashboardState extends State<Dashboard> {
                   borderRadius: BorderRadius.all(Radius.circular(40)),
                   color: ConstColors.backGroundColor,
                 ),
-                child: Center(
-                  child: Text(
-                    context
-                        .read<DashboardCubit>()
-                        .state
-                        .project
-                        .projectUsers
-                        .firstWhere(
-                            (value) => value.idUser == textItem.task.idUser)
-                        .user
-                        .characters
-                        .first
-                        .toUpperCase(),
+                child: Container(
+                  width: 40,
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(30)),
+                    color: ConstColors.backGroundColor,
+                  ),
+                  child: PopupMenuButton(
+                    onSelected: (value) {
+                      value as ProjectUserModel;
+                      context
+                          .read<DashboardCubit>()
+                          .updateTask(TaskModel(
+                            deadLine: textItem.task.deadLine,
+                            description: textItem.controller.text,
+                            idProject: textItem.task.idProject,
+                            idStatus: textItem.task.idStatus,
+                            idTask: textItem.task.idTask,
+                            idUser: value.idUser,
+                            ordem: textItem.task.ordem,
+                            priority: textItem.task.priority,
+                          ))
+                          .then((value) {
+                        if (!value) return;
+
+                        controller.clear();
+                        controller.addGroups(
+                            context.read<DashboardCubit>().returnGroupData());
+                      });
+                    },
+                    itemBuilder: (context) {
+                      return List<PopupMenuItem>.from(
+                        context
+                            .read<DashboardCubit>()
+                            .state
+                            .project
+                            .projectUsers
+                            .map<PopupMenuItem>(
+                              (x) => PopupMenuItem(
+                                enabled: x.idUser != textItem.task.idUser,
+                                value: x,
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.person),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text(x.email),
+                                  ],
+                                ),
+                              ),
+                            ),
+                      );
+                    },
+                    child: Center(
+                      child: Text(context
+                          .read<DashboardCubit>()
+                          .state
+                          .project
+                          .projectUsers
+                          .firstWhere(
+                              (value) => textItem.task.idUser == value.idUser)
+                          .user
+                          .characters
+                          .first
+                          .toUpperCase()),
+                    ),
                   ),
                 ),
               ),
               TextButton(
                   onPressed: () {
-                    _alterDataPicker((data) {});
+                    _alterDataPicker((data) {
+                      if (data.value == textItem.task.deadLine) {
+                        return;
+                      }
+                      context
+                          .read<DashboardCubit>()
+                          .updateTask(TaskModel(
+                            deadLine: data.value,
+                            description: textItem.task.description,
+                            idProject: textItem.task.idProject,
+                            idStatus: textItem.task.idStatus,
+                            idTask: textItem.task.idTask,
+                            idUser: textItem.task.idUser,
+                            ordem: textItem.task.ordem,
+                            priority: textItem.task.priority,
+                          ))
+                          .then((value) {
+                        if (!value) return;
+                        controller.clear();
+                        controller.addGroups(
+                            context.read<DashboardCubit>().returnGroupData());
+                      });
+                      Navigator.pop(context);
+                    });
                   },
                   child: Text(
                     '${textItem.task.deadLine.day}/${textItem.task.deadLine.month}/${textItem.task.deadLine.year}',
@@ -502,11 +695,12 @@ class _DashboardState extends State<Dashboard> {
 class TextItem extends AppFlowyGroupItem {
   final String s;
   final TaskModel task;
-  final TextEditingController controller = TextEditingController();
+  final TextEditingController controller;
 
   TextItem(
     this.s,
     this.task,
+    this.controller,
   );
 
   @override

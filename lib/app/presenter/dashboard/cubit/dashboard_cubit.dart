@@ -17,6 +17,7 @@ import 'package:agile_development_project/app/usescases/task/update_task_usecase
 import 'package:appflowy_board/appflowy_board.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
 part 'dashboard_state.dart';
@@ -40,10 +41,8 @@ class DashboardCubit extends Cubit<DashboardState> {
               .where((value) =>
                   value.idStatus == statusProjectTask.idStatusProjectTask)
               .map(
-                (x) => TextItem(
-                  x.idTask.toString(),
-                  x,
-                ),
+                (x) => TextItem(x.idTask.toString(), x,
+                    TextEditingController(text: x.description)),
               )
               .toList())));
     }
@@ -269,7 +268,8 @@ class DashboardCubit extends Cubit<DashboardState> {
     });
   }
 
-  void updateTask(TaskModel task) async {
+  Future<bool> updateTask(TaskModel task) async {
+    var retorno = false;
     emit(
       state.copyWith(status: DashboardStatus.loading),
     );
@@ -299,6 +299,8 @@ class DashboardCubit extends Cubit<DashboardState> {
         project: state.project,
         status: DashboardStatus.completed,
       ));
+      retorno = true;
     });
+    return retorno;
   }
 }

@@ -20,6 +20,8 @@ class FormFieldWidget extends StatelessWidget {
     this.onchange,
     this.outlineInputBorder,
     this.backgroundColor,
+    this.onCompleted,
+    this.onTapOutside,
   });
 
   final String hintText;
@@ -33,13 +35,17 @@ class FormFieldWidget extends StatelessWidget {
   final int minLines;
   final TextStyle? textStyle;
   final Function(String)? onchange;
+  final Function(String?)? onCompleted;
   final InputBorder? outlineInputBorder;
   final Color? backgroundColor;
+  final Function(PointerDownEvent)? onTapOutside;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       child: TextFormField(
+        onTapOutside: onTapOutside,
+        onSaved: onCompleted,
         onChanged: onchange,
         maxLines: maxLines,
         minLines: minLines,

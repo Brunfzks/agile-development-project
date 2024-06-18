@@ -41,12 +41,12 @@ class TaskModel implements Tasks {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'deadLine': deadLine.toString(),
+      'deadline': deadLine.toString(),
       'description': description,
-      'idProject': idProject,
-      'idStatus': idStatus,
+      'fk_Projects_idProjects': idProject,
+      'fk_StatusProjectTask_idStatusProjectTask': idStatus,
       'idTask': idTask,
-      'idUser': idUser,
+      'fk_Users_idUsuario': idUser,
       'ordem': ordem,
       'priority': priority,
     };
